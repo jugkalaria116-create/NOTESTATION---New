@@ -1,0 +1,68 @@
+.view-messages-container {
+  padding: 30px;
+  background: #121212; /* Dark background */
+  min-height: 100vh;
+  color: #fff;
+  font-family: Arial, sans-serif;
+}
+
+.view-messages-container h2 {
+  color: #FFD700; /* Golden yellow heading */
+  margin-bottom: 20px;
+  border-bottom: 2px solid #FFD700;
+  padding-bottom: 10px;
+}
+
+.messages-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+  background: #1e1e1e;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.5);
+}
+
+.messages-table th,
+.messages-table td {
+  padding: 12px;
+  text-align: left;
+  border-bottom: 1px solid #333;
+}
+
+.messages-table th {
+  background: #FFD700; /* Golden yellow header */
+  color: #000;
+  font-weight: bold;
+}
+
+.messages-table tr:nth-child(even) {
+  background: #2a2a2a;
+}
+
+.messages-table tr:hover {
+  background: #333;
+  transition: 0.2s ease;
+}
+
+.delete-btn {
+  background: #ff4d4d;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 6px;
+  color: white;
+  cursor: pointer;
+  font-size: 14px;
+  transition: 0.2s;
+}
+
+.delete-btn:hover {
+  background: #cc0000;
+}
+
+.no-messages {
+  text-align: center;
+  margin-top: 50px;
+  color: #FFD700; /* Golden yellow */
+  font-size: 18px;
+}

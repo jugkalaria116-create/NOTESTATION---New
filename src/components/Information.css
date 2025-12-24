@@ -1,0 +1,50 @@
+.info-section {
+  background: #111;
+  color: white;
+  padding: 60px 20px;
+  text-align: center;
+}
+
+.info-title {
+  font-size: 2rem;
+  margin-bottom: 40px;
+  font-weight: bold;
+}
+
+.info-cards {
+  display: flex;
+  justify-content: center;
+  gap: 30px;
+  flex-wrap: wrap;
+}
+
+.info-card {
+  background: #1c1c1c;
+  padding: 30px 20px;
+  border-radius: 12px;
+  width: 300px;
+  text-align: center;
+  transition: transform 0.3s ease;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
+}
+
+.info-card:hover {
+  transform: translateY(-8px);
+}
+
+.info-icon {
+  font-size: 50px;
+  margin-bottom: 20px;
+  color: #ffcc00;
+}
+
+.info-card h3 {
+  font-size: 1.2rem;
+  color: #ffcc00;
+  margin-bottom: 10px;
+}
+
+.info-card p {
+  font-size: 0.95rem;
+  color: #ccc;
+}

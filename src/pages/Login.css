@@ -1,0 +1,83 @@
+/* Login.css - Dark mode with golden button */
+
+html, body, #root {
+  height: 100%;
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background-color: #121212;
+  color: #fff;
+}
+
+.login-page-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 80vh;
+  padding: 20px;
+  background-image: 
+    linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)),
+    url('https://images.unsplash.com/photo-1519389950473-47ba0277781c?auto=format&fit=crop&w=1470&q=80');
+  background-size: cover;
+  background-position: center;
+  border-radius: 12px;
+  box-shadow: 0 6px 20px rgba(0,0,0,0.5);
+}
+
+.login-page-container h2 {
+  margin-bottom: 20px;
+  font-size: 2rem;
+  color: #fff;
+}
+
+/* Form Styling */
+form {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  max-width: 400px;
+  padding: 30px;
+  background: rgba(30, 30, 30, 0.85);
+  border-radius: 12px;
+}
+
+input {
+  padding: 12px 15px;
+  margin-bottom: 15px;
+  border: 1px solid #555;
+  border-radius: 8px;
+  font-size: 1rem;
+  background-color: #222;
+  color: #fff;
+}
+
+input::placeholder {
+  color: #bbb;
+}
+
+/* Login Button */
+button[type="submit"] {
+  background-color: #FFc107;
+  color: #000;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  border: none;
+  font-weight: bold;
+  padding: 12px 15px;
+  border-radius: 8px;
+}
+
+button[type="submit"]:hover {
+  background-color: #FFC107;
+}
+
+/* Messages */
+.error-msg {
+  color: #ff4d4d;
+  margin-bottom: 15px;
+}
+
+.success-msg {
+  color: #4caf50;
+  margin-bottom: 15px;
+}

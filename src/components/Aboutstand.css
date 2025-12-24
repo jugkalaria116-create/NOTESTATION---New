@@ -1,0 +1,67 @@
+/* Full-page library-themed background */
+html, body {
+  height: 100%;
+  margin: 0;
+  font-family: Arial, sans-serif;
+
+  /* Library image with dark overlay */
+  background-image: linear-gradient(
+      rgba(35, 35, 35, 0.8),
+      rgba(35, 35, 35, 0.8)
+    ),
+    url('https://images.unsplash.com/photo-1512820790803-83ca734da794?auto=format&fit=crop&w=1470&q=80');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+}
+
+/* ABOUT/STAND CONTAINER */
+.aboutstand-container {
+  width: 100%;
+  padding: 50px 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.aboutstand-title {
+  color: #fff;
+  font-size: 2.5rem;
+  font-weight: 700;
+  margin-bottom: 48px;
+  text-align: center;
+}
+
+.aboutstand-card-row {
+  display: flex;
+  justify-content: center;
+  gap: 40px;
+  width: 100%;
+  max-width: 1600px;
+}
+
+.aboutstand-card {
+  background: rgba(42, 42, 42, 0.9); /* semi-transparent for frosted glass effect */
+  border-radius: 18px;
+  width: 26vw;
+  min-width: 290px;
+  max-width: 440px;
+  padding: 38px 28px;
+  text-align: center;
+  box-sizing: border-box;
+  margin-bottom: 32px;
+  backdrop-filter: blur(5px);
+}
+
+.aboutstand-card-title {
+  color: #ffd43b;
+  font-size: 1.7rem;
+  font-weight: 700;
+  margin-bottom: 18px;
+}
+
+.aboutstand-card-text {
+  color: #fff;
+  font-size: 1.15rem;
+}

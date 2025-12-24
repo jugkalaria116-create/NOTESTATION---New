@@ -1,0 +1,73 @@
+.manage-notes-page {
+  padding: 20px;
+  font-family: Arial, sans-serif;
+  background-color: #111; /* Black background */
+  color: #ffffff;         /* White text */
+  min-height: 100vh;
+}
+
+h1 {
+  color: #ffeb3b; /* Yellow heading */
+}
+
+p {
+  color: #ffffff;
+}
+
+.notes-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+  background-color: #222;
+}
+
+.notes-table th,
+.notes-table td {
+  border: 1px solid #444;
+  padding: 12px;
+  text-align: left;
+  color: #ffffff;
+}
+
+.notes-table th {
+  background-color: #333;
+  color: #ffeb3b; /* Yellow table headers */
+}
+
+.notes-table tr:nth-child(even) {
+  background-color: #1a1a1a;
+}
+
+.btn {
+  padding: 6px 12px;
+  margin-right: 5px;
+  border: none;
+  cursor: pointer;
+  border-radius: 4px;
+  font-weight: bold;
+}
+
+.btn-view {
+  background-color: #ffeb3b; /* Yellow button */
+  color: #111;
+}
+
+.btn-view:hover {
+  background-color: #fdd835;
+}
+
+.btn-delete {
+  background-color: #f44336; /* Red button */
+  color: #ffffff;
+}
+
+.btn-delete:hover {
+  background-color: #d32f2f;
+}
+
+.loading-text,
+.no-notes {
+  font-size: 18px;
+  color: #ffeb3b;
+  margin-top: 20px;
+}

@@ -1,0 +1,62 @@
+.upload-page-container {
+  min-height: 100vh;
+  background:
+    linear-gradient(rgba(0,0,0,.7), rgba(0,0,0,.7)),
+    url("https://images.unsplash.com/photo-1515165562835-c4c1b5722f6b");
+  background-size: cover;
+  color: #fff;
+}
+
+.upload-content-wrap {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 40px;
+}
+
+.upload-container {
+  width: 420px;
+  background: rgba(0,0,0,.75);
+  padding: 35px;
+  border-radius: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  /* backdrop-filter: blur(10px); */
+}
+
+.upload-title {
+  text-align: center;
+  color: #f6d780;
+  margin-bottom: 10px;
+}
+
+.upload-input,
+.upload-textarea,
+.upload-file {
+  padding: 12px;
+  border-radius: 10px;
+  border: none;
+  background: #222;
+  color: #fff;
+}
+
+.upload-textarea {
+  resize: none;
+  height: 80px;
+}
+
+.submit-btn {
+  background: #f6d780;
+  color: #333;
+  padding: 14px;
+  border-radius: 30px;
+  border: none;
+  font-weight: bold;
+  cursor: pointer;
+  transition: .3s;
+}
+
+.submit-btn:hover {
+  background: #e6c76a;
+}

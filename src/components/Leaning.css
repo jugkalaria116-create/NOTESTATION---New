@@ -1,0 +1,46 @@
+.leaning-container {
+  width: 100vw;
+  /* height: 100vh; */
+  background: #232323;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.leaning-box {
+  background: #2a2a2a;
+  border-radius: 18px;
+  padding: 60px 40px;
+  width: 80vw;
+  max-width: 1400px;
+  text-align: center;
+}
+
+.leaning-title {
+  color: #fff;
+  font-size: 2.5rem;
+  font-weight: 700;
+  margin-bottom: 20px;
+}
+
+.leaning-subtitle {
+  color: #d3d3d3;
+  font-size: 1.2rem;
+  margin-bottom: 35px;
+}
+
+.leaning-button {
+  background: #ffd43b;
+  color: #232323;
+  font-weight: 700;
+  font-size: 1.1rem;
+  border: none;
+  border-radius: 30px;
+  padding: 18px 38px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.leaning-button:hover {
+  background: #ffe066;
+}

@@ -1,0 +1,116 @@
+.contact-section {
+  padding: 50px 20px;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  background-image: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)),
+    url('https://images.unsplash.com/photo-1512820790803-83ca734da794?auto=format&fit=crop&w=1470&q=80');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+}
+
+.contact-container {
+  display: flex;
+  gap: 50px;
+  backdrop-filter: blur(15px);
+  background: rgba(0,0,0,0.6);
+  padding: 40px;
+  border-radius: 15px;
+  max-width: 1200px;
+  width: 100%;
+}
+
+.contact-details,
+.contact-form {
+  flex: 1;
+}
+
+.contact-details h2,
+.contact-form h2 {
+  border-bottom: 2px solid #fce77d;
+  padding-bottom: 10px;
+  margin-bottom: 20px;
+  color: #fce77d;
+}
+
+.details-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+
+.detail-card {
+  background: rgba(255, 255, 255, 0.05);
+  padding: 20px;
+  border-radius: 10px;
+  text-align: center;
+}
+
+.detail-icon {
+  font-size: 30px;
+  margin-bottom: 10px;
+}
+
+.detail-card h3 {
+  margin-bottom: 5px;
+}
+
+.contact-form form {
+  display: flex;
+  flex-direction: column;
+}
+
+.contact-form label {
+  margin-bottom: 5px;
+  font-weight: bold;
+  color: #fce77d;
+}
+
+.contact-form input,
+.contact-form textarea {
+  margin-bottom: 15px;
+  padding: 10px;
+  border-radius: 8px;
+  border: none;
+  background: rgba(255, 255, 255, 0.1);
+  color: white;
+  font-size: 14px;
+  resize: none;
+}
+
+.contact-form input::placeholder,
+.contact-form textarea::placeholder {
+  color: #ccc;
+}
+
+.contact-form button {
+  padding: 12px;
+  border: none;
+  border-radius: 25px;
+  background-color: #fce77d;
+  color: #000;
+  font-weight: bold;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.contact-form button:hover {
+  background-color: #e6d267;
+}
+
+.status-msg {
+  margin-top: 10px;
+  font-weight: bold;
+}
+
+@media (max-width: 900px) {
+  .contact-container {
+    flex-direction: column;
+  }
+
+  .details-grid {
+    grid-template-columns: 1fr;
+  }
+}

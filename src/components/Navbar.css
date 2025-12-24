@@ -1,0 +1,62 @@
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #000;
+  padding: 12px 40px;
+  color: white;
+  font-family: Arial, sans-serif;
+  border-radius: 10px 10px 0 0;
+}
+
+/* Logo Section */
+.navbar-logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.logo-img {
+  height: 55px; /* adjust size */
+}
+
+.logo-text {
+  font-size: 18px;
+  font-weight: bold;
+  color: #c49a6c; /* golden brown style */
+  letter-spacing: 2px;
+}
+
+/* Navigation Links */
+.nav-links {
+  display: flex;
+  list-style: none;
+  gap: 30px;
+}
+
+.nav-links li a {
+  color: white;
+  text-decoration: none;
+  font-size: 16px;
+  font-weight: bold;
+  transition: color 0.3s ease;
+}
+
+.nav-links li a:hover {
+  color: #f1c40f; /* yellow hover */
+}
+
+/* Login Button */
+.login-btn a {
+  background-color: #f1c40f;
+  color: black;
+  padding: 10px 20px;
+  border-radius: 25px;
+  text-decoration: none;
+  font-weight: bold;
+  transition: all 0.3s ease;
+}
+
+.login-btn a:hover {
+  background-color: #d4ac0d;
+}

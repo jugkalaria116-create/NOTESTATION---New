@@ -5,48 +5,65 @@ import "./Notes.css";
 
 function Notes() {
   const [notes, setNotes] = useState([]);
-
-  // 🔍 Advanced search states
   const [searchText, setSearchText] = useState("");
   const [selectedSubject, setSelectedSubject] = useState("all");
   const [sortOrder, setSortOrder] = useState("newest");
 
+  const userEmail = sessionStorage.getItem("email");
+
   const fetchNotes = async () => {
-    try {
-      const res = await fetch("http://localhost:5000/notes");
-      const data = await res.json();
-      setNotes(data);
-    } catch (err) {
-      console.error(err);
-    }
+    const res = await fetch("http://localhost:5000/notes");
+    const data = await res.json();
+    setNotes(data);
   };
 
   useEffect(() => {
     fetchNotes();
   }, []);
 
-  // 📌 Get unique subjects for dropdown
-  const subjects = ["all", ...new Set(notes.map(note => note.subject))];
+  const subjects = ["all", ...new Set(notes.map(n => n.subject))];
 
-  // 🧠 Advanced filtering logic
   const filteredNotes = notes
-    .filter(note => {
-      const textMatch =
-        note.title.toLowerCase().includes(searchText.toLowerCase()) ||
-        note.description.toLowerCase().includes(searchText.toLowerCase());
-
-      const subjectMatch =
-        selectedSubject === "all" || note.subject === selectedSubject;
-
-      return textMatch && subjectMatch;
-    })
+    .filter(note =>
+      (note.title.toLowerCase().includes(searchText.toLowerCase()) ||
+        note.description.toLowerCase().includes(searchText.toLowerCase())) &&
+      (selectedSubject === "all" || note.subject === selectedSubject)
+    )
     .sort((a, b) => {
-      if (sortOrder === "newest") {
-        return new Date(b.created_at) - new Date(a.created_at);
-      } else {
-        return new Date(a.created_at) - new Date(b.created_at);
-      }
+      if (sortOrder === "liked") return (b.likes_count || 0) - (a.likes_count || 0);
+      if (sortOrder === "downloaded") return (b.downloads_count || 0) - (a.downloads_count || 0);
+      if (sortOrder === "rated") return (b.avg_rating || 0) - (a.avg_rating || 0);
+      if (sortOrder === "oldest") return new Date(a.created_at) - new Date(b.created_at);
+      return new Date(b.created_at) - new Date(a.created_at);
     });
+
+  const likeNote = async (id) => {
+    await fetch(`http://localhost:5000/notes/${id}/like`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email: userEmail }),
+    });
+    fetchNotes();
+  };
+
+  const rateNote = async (id, rating) => {
+    await fetch(`http://localhost:5000/notes/${id}/rate`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email: userEmail, rating }),
+    });
+    fetchNotes();
+  };
+
+  const downloadNote = async (id, url) => {
+    await fetch(`http://localhost:5000/notes/${id}/download`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email: userEmail }),
+    });
+    window.open(url, "_blank");
+    fetchNotes();
+  };
 
   return (
     <div className="page-container">
@@ -56,72 +73,60 @@ function Notes() {
         <div className="container">
           <h1>All Notes</h1>
 
-          {/* 🔍 Advanced Search Bar */}
+          {/* SEARCH BAR */}
           <div className="search-bar">
             <input
-              type="text"
-              placeholder="Search by title or description..."
+              placeholder="Search..."
               value={searchText}
               onChange={(e) => setSearchText(e.target.value)}
             />
 
-            <select
-              value={selectedSubject}
-              onChange={(e) => setSelectedSubject(e.target.value)}
-            >
-              {subjects.map((sub, index) => (
-                <option key={index} value={sub}>
-                  {sub === "all" ? "All Subjects" : sub}
-                </option>
+            <select onChange={(e) => setSelectedSubject(e.target.value)}>
+              {subjects.map((s, i) => (
+                <option key={i}>{s}</option>
               ))}
             </select>
 
-            <select
-              value={sortOrder}
-              onChange={(e) => setSortOrder(e.target.value)}
-            >
-              <option value="newest">Newest First</option>
-              <option value="oldest">Oldest First</option>
+            <select onChange={(e) => setSortOrder(e.target.value)}>
+              <option value="newest">Newest</option>
+              <option value="oldest">Oldest</option>
+              <option value="liked">Most Liked</option>
+              <option value="downloaded">Most Downloaded</option>
+              <option value="rated">Top Rated</option>
             </select>
           </div>
 
-          {/* 📄 Notes */}
+          {/* NOTES */}
           <div className="card-grid">
-            {filteredNotes.length === 0 ? (
-              <p>No matching notes found</p>
-            ) : (
-              filteredNotes.map((note) => (
-                <div className="note-card" key={note.id}>
-                  <h3>{note.title}</h3>
-                  <p>{note.description}</p>
-                  <p><b>Subject:</b> {note.subject}</p>
-                  <p>
-                    <b>Uploaded At:</b>{" "}
-                    {new Date(note.created_at).toLocaleString()}
-                  </p>
+            {filteredNotes.map(note => (
+              <div className="note-card" key={note.id}>
+                <h3>{note.title}</h3>
+                <p>{note.description}</p>
+                <p><b>Subject:</b> {note.subject}</p>
 
-                  {note.upload_file && (
-                    <div className="note-actions">
-                      <a
-                        href={`http://localhost:5000/uploads/${note.upload_file}`}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="view-btn"
-                      >
-                        View
-                      </a>
-                      <a
-                        href={`http://localhost:5000/uploads/${note.upload_file}`}
-                        download
-                        className="download-btn"
-                      >
-                        Download
-                      </a>
+                <div className="note-stats">
+                  ❤️ {note.likes_count || 0}
+                  &nbsp;⬇️ {note.downloads_count || 0}
+
+                  <span className="rating-click">
+                    ⭐ {note.avg_rating || "0.0"}
+                    <div className="rating-popup">
+                      {[1,2,3,4,5].map(star => (
+                        <span key={star} onClick={() => rateNote(note.id, star)}>
+                          ★
+                        </span>
+                      ))}
                     </div>
-                  )}
+                  </span>
                 </div>
-              ))
-            )}
+
+                <div className="note-actions">
+                  <button onClick={() => window.open(note.url, "_blank")}>View</button>
+                  <button onClick={() => downloadNote(note.id, note.url)}>Download</button>
+                  <button onClick={() => likeNote(note.id)}>❤️ Like</button>
+                </div>
+              </div>
+            ))}
           </div>
         </div>
       </div>

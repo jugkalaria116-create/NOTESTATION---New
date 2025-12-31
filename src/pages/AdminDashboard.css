@@ -1,93 +1,43 @@
-:root {
-  --accent: #facc3c;
-  --text-light: #f9f9f9;
-  --bg-card: #2a2a2a;
-}
-
-body, html {
-  margin: 0;
-  padding: 0;
-  font-family: 'Segoe UI', sans-serif;
-  background-color: #1e1e1e;
-  color: var(--text-light);
+.admin-dashboard {
+  min-height: 100vh;
+  background: #0f1e16;
+  color: #fff;
+  padding: 40px;
 }
 
 .admin-header {
-  background-image: 
-    linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)),
-    url('https://images.unsplash.com/photo-1503676260728-1c00da094a0b?auto=format&fit=crop&w=1470&q=80');
-  background-size: cover;
-  background-position: center;
-  color: #fff;
-  padding: 180px 20px 100px;
-  text-align: center;
-  margin-top: 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 
-.admin-header h1 {
-  font-size: 42px;
-  font-weight: bold;
-  color: var(--accent);
+.admin-header button {
+  background: #ff4d4d;
+  border: none;
+  padding: 10px 16px;
+  border-radius: 8px;
+  color: white;
+  cursor: pointer;
 }
 
-/* ---------- Dashboard Cards Container ---------- */
-.dashboard-section.container {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 40px 20px;
-}
-
-.dashboard-cards {
+.admin-cards {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-  gap: 30px;
-}
-
-.dashboard-card {
-  background-color: var(--bg-card);
-  border-radius: 12px;
-  box-shadow: 0 6px 16px rgba(0,0,0,0.25);
-  padding: 30px 20px;
-  text-align: center;
-  transition: transform 0.3s ease;
-}
-
-.dashboard-card:hover {
-  transform: translateY(-6px);
-}
-
-.card-title {
-  color: var(--accent);
-  font-weight: 600;
-  margin-bottom: 15px;
-  font-size: 1.25rem;
-}
-
-.card-text {
-  color: #fff;
-  margin-bottom: 20px;
-}
-
-.btn-light {
-  background-color: #fff;
-  color: #000;
-  font-weight: bold;
-  border-radius: 6px;
-  padding: 8px 16px;
-  text-decoration: none;
-  display: inline-block;
-}
-
-.btn-light:hover {
-  background-color: #facc3c;
-  color: #000;
-}
-
-/* Footer */
-.footer {
-  background-color: #111;
-  color: #ccc;
-  text-align: center;
-  padding: 20px 10px;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 25px;
   margin-top: 40px;
+}
+
+.admin-card {
+  background: rgba(255,255,255,0.05);
+  padding: 30px;
+  border-radius: 16px;
+  font-size: 18px;
+  text-align: center;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.admin-card:hover {
+  background: rgba(0,255,153,0.15);
+  transform: translateY(-4px);
 }

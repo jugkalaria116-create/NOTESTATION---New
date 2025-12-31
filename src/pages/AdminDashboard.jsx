@@ -1,72 +1,41 @@
-import React from "react";
-import { useNavigate, Navigate } from "react-router-dom";
-import Footer from "../components/Footer";
+import React, { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import "./AdminDashboard.css";
 
 function AdminDashboard() {
-  // ✅ Hooks MUST be at top level
   const navigate = useNavigate();
 
-  // ✅ Auth check AFTER hooks
-  if (localStorage.getItem("role") !== "admin") {
-    return <Navigate to="/login" />;
-  }
+  useEffect(() => {
+    if (sessionStorage.getItem("role") !== "admin") {
+      navigate("/login", { replace: true });
+    }
+  }, [navigate]);
+
+  const logout = () => {
+    sessionStorage.clear();
+    navigate("/login");
+  };
 
   return (
-    <div className="admin-dashboard-page">
+    <div className="admin-dashboard">
       <header className="admin-header">
-        <h1>Welcome, Admin</h1>
-        <p>
-          Monitor user activity, manage uploads, and control the platform with ease.
-        </p>
+        <h1>Admin Dashboard</h1>
+        <button onClick={logout}>Logout</button>
       </header>
 
-      <section className="dashboard-section container">
-        <div className="dashboard-cards">
-
-          <div className="dashboard-card">
-            <h5 className="card-title">Manage Users</h5>
-            <p className="card-text">
-              View, edit, or remove users registered on NoteStation.
-            </p>
-            <button
-              onClick={() => navigate("/manage-users")}
-              className="btn btn-light"
-            >
-              Check User Details
-            </button>
-          </div>
-
-          <div className="dashboard-card">
-            <h5 className="card-title">Manage Notes</h5>
-            <p className="card-text">
-              Review, approve, or delete uploaded notes.
-            </p>
-            <button
-              onClick={() => navigate("/manage-notes")}
-              className="btn btn-light"
-            >
-              Check Notes
-            </button>
-          </div>
-
-          <div className="dashboard-card">
-            <h5 className="card-title">View Messages</h5>
-            <p className="card-text">
-              Check inquiries submitted through the contact form.
-            </p>
-            <button
-              onClick={() => navigate("/view-messages")}
-              className="btn btn-light"
-            >
-              Check Messages
-            </button>
-          </div>
-
+      <div className="admin-cards">
+        <div className="admin-card" onClick={() => navigate("/manage-users")}>
+          👤 Manage Users
         </div>
-      </section>
 
-      <Footer />
+        <div className="admin-card" onClick={() => navigate("/manage-notes")}>
+          📄 Manage Notes
+        </div>
+
+        <div className="admin-card" onClick={() => navigate("/view-messages")}>
+          💬 View Messages
+        </div>
+      </div>
     </div>
   );
 }

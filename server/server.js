@@ -8,16 +8,14 @@ import fs from "fs";
 import { fileURLToPath } from "url";
 import { dirname } from "path";
 
-// ---------------- ES Module __dirname Fix ----------------
+// ---------------- ES Module Fix ----------------
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
 // ---------------- Express Setup ----------------
 const app = express();
 app.use(cors());
-app.use(express.json());
-
-// Serve uploaded files
+app.use(express.json()); // ✅ REQUIRED
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
 // ---------------- MySQL Connection ----------------
@@ -35,7 +33,6 @@ function connectDB() {
   db.connect((err) => {
     if (err) {
       console.error("❌ MySQL connection failed:", err.code);
-      console.log("🔄 Retrying connection in 5s...");
       setTimeout(connectDB, 5000);
     } else {
       console.log("✅ Connected to MySQL");
@@ -43,7 +40,6 @@ function connectDB() {
   });
 
   db.on("error", (err) => {
-    console.error("⚠️ MySQL error:", err.code);
     if (
       err.code === "PROTOCOL_CONNECTION_LOST" ||
       err.code === "ECONNREFUSED"
@@ -57,119 +53,72 @@ function connectDB() {
 
 connectDB();
 
-// ---------------- Multer Config (PDF only) ----------------
+// ---------------- Multer (PDF only) ----------------
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
-    const uploadDir = path.join(__dirname, "uploads");
-    if (!fs.existsSync(uploadDir)) fs.mkdirSync(uploadDir);
-    cb(null, uploadDir);
+    const dir = path.join(__dirname, "uploads");
+    if (!fs.existsSync(dir)) fs.mkdirSync(dir);
+    cb(null, dir);
   },
-  filename: (req, file, cb) => {
-    cb(null, Date.now() + path.extname(file.originalname));
-  },
+  filename: (req, file, cb) =>
+    cb(null, Date.now() + path.extname(file.originalname)),
 });
 
 const upload = multer({
   storage,
   fileFilter: (req, file, cb) => {
     if (file.mimetype !== "application/pdf") {
-      return cb(new Error("Only PDF files are allowed"), false);
+      return cb(new Error("Only PDF files allowed"), false);
     }
     cb(null, true);
   },
 });
 
-// ---------------- Routes ----------------
+// ---------------- Health ----------------
+app.get("/", (req, res) => res.send("Server running 🚀"));
 
-// Health check
-app.get("/", (req, res) => {
-  res.send("Server is running 🚀");
-});
-
-// ---------------- Users ----------------
-app.get("/users", (req, res) => {
-  const sql = "SELECT * FROM user";
-  db.query(sql, (err, results) => {
-    if (err) return res.status(500).json({ error: err.message });
-    res.json(results);
-  });
-});
-
-app.delete("/users/:id", (req, res) => {
-  const userId = req.params.id;
-  const sql = "DELETE FROM user WHERE id = ?";
-  db.query(sql, [userId], (err) => {
-    if (err) return res.status(500).json({ error: err.message });
-    res.json({ message: "User deleted successfully" });
-  });
-});
-
-// ---------------- Register User ----------------
+// ---------------- Auth ----------------
 app.post("/register", (req, res) => {
   const { fname, lname, email, password } = req.body;
-
-  if (!fname || !lname || !email || !password) {
-    return res.status(400).json({ error: "All fields are required" });
-  }
-
   const sql =
     "INSERT INTO user (fname, lname, email, password) VALUES (?, ?, ?, ?)";
-
   db.query(sql, [fname, lname, email, password], (err) => {
-    if (err) {
-      console.error("❌ Database error:", err);
-      return res.status(500).json({ error: "Database error" });
-    }
-
-    res.json({ success: true, message: "User registered successfully!" });
+    if (err) return res.status(500).json({ error: "Database error" });
+    res.json({ success: true });
   });
 });
 
-// ---------------- LOGIN (RETURNS NAME) ----------------
 app.post("/login", (req, res) => {
   const { email, password } = req.body;
-
-  if (!email || !password) {
-    return res.status(400).json({ message: "Email and password required" });
-  }
-
   const sql = `
     SELECT id, fname, lname, email
     FROM user
     WHERE email = ? AND password = ?
   `;
-
   db.query(sql, [email, password], (err, results) => {
-    if (err) {
-      console.error("❌ Login error:", err);
-      return res.status(500).json({ message: "Database error" });
-    }
+    if (results.length === 0)
+      return res.status(401).json({ message: "Invalid credentials" });
 
-    if (results.length === 0) {
-      return res.status(401).json({ message: "Invalid email or password" });
-    }
-
-    const user = results[0];
-
+    const u = results[0];
     res.json({
-      userId: user.id,
-      name: `${user.fname} ${user.lname}`, // ✅ NAME SENT
-      email: user.email,
+      userId: u.id,
+      name: `${u.fname} ${u.lname}`,
+      email: u.email,
     });
   });
 });
 
-// ---------------- Notes (UPLOAD) ----------------
+// ---------------- Upload Note ----------------
 app.post("/notes", upload.single("upload_file"), (req, res) => {
   const { title, description, subject, email } = req.body;
-  const fileName = req.file ? req.file.filename : null;
+  const fileName = req.file?.filename;
 
   if (!title || !subject || !email || !fileName) {
-    return res.status(400).json({ error: "⚠️ Required fields missing!" });
+    return res.status(400).json({ error: "Required fields missing" });
   }
 
   const sql = `
-    INSERT INTO notes 
+    INSERT INTO notes
     (title, description, subject, email, upload_file, created_at)
     VALUES (?, ?, ?, ?, ?, NOW())
   `;
@@ -179,7 +128,6 @@ app.post("/notes", upload.single("upload_file"), (req, res) => {
     [title, description, subject, email, fileName],
     (err, result) => {
       if (err) return res.status(500).json({ error: err.message });
-
       res.json({
         id: result.insertId,
         title,
@@ -188,7 +136,6 @@ app.post("/notes", upload.single("upload_file"), (req, res) => {
         email,
         upload_file: fileName,
         url: `http://localhost:5000/uploads/${fileName}`,
-        created_at: new Date(),
       });
     }
   );
@@ -198,85 +145,96 @@ app.post("/notes", upload.single("upload_file"), (req, res) => {
 app.get("/notes", (req, res) => {
   const sql = `
     SELECT 
-      id,
-      title,
-      description,
-      subject,
-      email,
-      upload_file,
-      CONCAT('http://localhost:5000/uploads/', upload_file) AS url,
-      created_at
+      id,title,description,subject,email,upload_file,
+      likes_count,downloads_count,avg_rating,created_at,
+      CONCAT('http://localhost:5000/uploads/', upload_file) AS url
     FROM notes
     ORDER BY created_at DESC
   `;
-
   db.query(sql, (err, results) => {
     if (err) return res.status(500).json({ error: err.message });
     res.json(results);
   });
 });
 
-// ---------------- Delete Note ----------------
-app.delete("/notes/:id", (req, res) => {
-  const id = req.params.id;
+// ---------------- Like (SAFE) ----------------
+app.post("/notes/:id/like", (req, res) => {
+  const { id } = req.params;
+  const email = req.body?.email;
 
-  const sqlSelect = "SELECT upload_file FROM notes WHERE id = ?";
-  db.query(sqlSelect, [id], (err, results) => {
-    if (err) return res.status(500).json({ error: err.message });
-    if (results.length === 0)
-      return res.status(404).json({ error: "Note not found" });
-
-    const fullPath = path.join(__dirname, "uploads", results[0].upload_file);
-    if (fs.existsSync(fullPath)) fs.unlinkSync(fullPath);
-
-    const sqlDelete = "DELETE FROM notes WHERE id = ?";
-    db.query(sqlDelete, [id], (err2) => {
-      if (err2) return res.status(500).json({ error: err2.message });
-      res.json({ message: "Note deleted successfully" });
-    });
-  });
-});
-
-// ---------------- Contact Form ----------------
-app.post("/contact", (req, res) => {
-  const { name, email, subject, message } = req.body;
-
-  if (!name || !email || !subject || !message) {
-    return res
-      .status(400)
-      .json({ success: false, error: "All fields are required" });
+  if (!email) {
+    return res.status(401).json({ message: "Login required" });
   }
 
-  const sql =
-    "INSERT INTO contact (name, email, subject, message, created_at) VALUES (?, ?, ?, ?, NOW())";
+  const checkSql =
+    "SELECT id FROM note_likes WHERE note_id = ? AND user_email = ?";
 
-  db.query(sql, [name, email, subject, message], (err) => {
-    if (err) {
-      console.error("Database error:", err);
-      return res
-        .status(500)
-        .json({ success: false, error: "Database error" });
-    }
+  db.query(checkSql, [id, email], (err, rows) => {
+    if (rows.length > 0)
+      return res.status(400).json({ message: "Already liked" });
 
-    res.json({ success: true, message: "Message sent successfully!" });
+    db.query(
+      "INSERT INTO note_likes (note_id, user_email) VALUES (?, ?)",
+      [id, email],
+      () => {
+        db.query(
+          "UPDATE notes SET likes_count = likes_count + 1 WHERE id = ?",
+          [id]
+        );
+        res.json({ success: true });
+      }
+    );
   });
 });
 
-// ---------------- Admin: Contact Messages ----------------
-app.get("/admin/contact-messages", (req, res) => {
+// ---------------- Download (SAFE) ----------------
+app.post("/notes/:id/download", (req, res) => {
+  const { id } = req.params;
+  const email = req.body?.email;
+
+  if (!email) {
+    return res.status(401).json({ message: "Login required" });
+  }
+
+  db.query(
+    "UPDATE notes SET downloads_count = downloads_count + 1 WHERE id = ?",
+    [id],
+    () => res.json({ success: true })
+  );
+});
+
+// ---------------- Rate (SAFE) ----------------
+app.post("/notes/:id/rate", (req, res) => {
+  const { id } = req.params;
+  const email = req.body?.email;
+  const rating = req.body?.rating;
+
+  if (!email) {
+    return res.status(401).json({ message: "Login required" });
+  }
+
   const sql = `
-    SELECT id, name, email, subject, message, created_at
-    FROM contact
-    ORDER BY created_at DESC
+    INSERT INTO note_ratings (note_id, user_email, rating)
+    VALUES (?, ?, ?)
+    ON DUPLICATE KEY UPDATE rating = VALUES(rating)
   `;
 
-  db.query(sql, (err, results) => {
-    if (err) return res.status(500).json({ error: "Database error" });
-    res.json(results);
+  db.query(sql, [id, email, rating], () => {
+    const avgSql = `
+      UPDATE notes
+      SET avg_rating = (
+        SELECT ROUND(AVG(rating), 1)
+        FROM note_ratings
+        WHERE note_id = ?
+      )
+      WHERE id = ?
+    `;
+    db.query(avgSql, [id, id]);
+    res.json({ success: true });
   });
 });
 
-// ---------------- Start Server ----------------
-app.listen(5000, () => {
-  console.log("🚀 Server running on http://localhost:5000");
-});
+// ---------------- Start ----------------
+app.listen(5000, () =>
+  console.log("🚀 Server running on http://localhost:5000")
+);

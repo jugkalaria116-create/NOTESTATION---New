@@ -4,72 +4,56 @@ import "./ClientDashboard.css";
 
 function ClientDashboard() {
   const navigate = useNavigate();
-
   const [name, setName] = useState("");
-  const [checkingAuth, setCheckingAuth] = useState(true);
 
   useEffect(() => {
-    // 🔐 SESSION STORAGE (instead of localStorage)
-    let storedName = sessionStorage.getItem("name");
+    const storedName = sessionStorage.getItem("name");
+    const role = sessionStorage.getItem("role");
 
-    // 🚫 sanitize bad values
-    if (!storedName || storedName === "undefined" || storedName === "null") {
-      navigate("/logins", { replace: true });
+    if (!storedName || role !== "client") {
+      navigate("/login", { replace: true });
     } else {
       setName(storedName);
     }
-
-    setCheckingAuth(false);
   }, [navigate]);
 
-  const handleLogout = () => {
-    sessionStorage.clear(); // ✅ clear session
-    navigate("/logins", { replace: true });
+  const logout = () => {
+    sessionStorage.clear();
+    navigate("/login");
   };
-
-  // ⛔ Stop rendering until auth is checked
-  if (checkingAuth) return null;
 
   return (
     <div className="client-dashboard">
       {/* Sidebar */}
-      <aside className="sidebar">
+      <aside className="client-sidebar">
+        <h2 className="brand">NoteStation</h2>
+
         <div className="profile">
-          <div className="avatar">
-            {name ? name.charAt(0).toUpperCase() : "U"}
-          </div>
-          <p className="email">{name || "User"}</p>
+          <div className="avatar">{name.charAt(0).toUpperCase()}</div>
+          <p>{name}</p>
         </div>
 
-        <nav className="menu">
-          <NavLink to="/" className="menu-item">🏠 Home</NavLink>
-          <NavLink to="/upload" className="menu-item">📤 Upload Notes</NavLink>
-          <NavLink to="/notes" className="menu-item">📚 Browse Notes</NavLink>
-          <NavLink to="/contact" className="menu-item">📞 Contact Us</NavLink>
-          <NavLink to="/about" className="menu-item">ℹ️ About</NavLink>
+        <nav>
+          <NavLink to="/" end>🏠 Home</NavLink>
+          <NavLink to="/notes">📚 Browse Notes</NavLink>
+          <NavLink to="/upload">📤 Upload Notes</NavLink>
+          <NavLink to="/about">ℹ️ About</NavLink>
+          <NavLink to="/contact">📞 Contact</NavLink>
         </nav>
+
+        <button className="logout-btn" onClick={logout}>Logout</button>
       </aside>
 
       {/* Main */}
-      <main className="dashboard-main">
-        <div className="top-bar">
-          <input
-            type="text"
-            placeholder="Search notes by title or subject..."
-            disabled
-          />
-          <button className="logout-btn" onClick={handleLogout}>
-            Logout
-          </button>
-        </div>
+      <main className="client-main">
+        <h1>Welcome, {name} 👋</h1>
+        <p>Explore notes, upload content, and learn smarter.</p>
 
-        <div className="empty-state">
-          <p>No notes uploaded yet.</p>
+        <div className="stats">
+          <div className="stat-card">📄 Total Notes<br /><span>—</span></div>
+          <div className="stat-card">❤️ Likes Given<br /><span>—</span></div>
+          <div className="stat-card">⬇️ Downloads<br /><span>—</span></div>
         </div>
-
-        <footer className="dashboard-footer">
-          © 2025 NoteStation. All rights reserved
-        </footer>
       </main>
     </div>
   );

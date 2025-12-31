@@ -14,15 +14,17 @@ function Logins() {
     e.preventDefault();
     setError("");
 
-    // 🔐 STATIC ADMIN SESSION
+    // ADMIN LOGIN
     if (email === "admin@gmail.com" && password === "Admin@123") {
       sessionStorage.clear();
       sessionStorage.setItem("role", "admin");
+      sessionStorage.setItem("email", email);
       sessionStorage.setItem("name", "Admin");
       navigate("/admin");
       return;
     }
 
+    // CLIENT LOGIN
     try {
       const res = await fetch("http://localhost:5000/login", {
         method: "POST",
@@ -37,12 +39,11 @@ function Logins() {
         return;
       }
 
-      // ✅ SESSION STORAGE (NO UNDEFINED)
       sessionStorage.clear();
       sessionStorage.setItem("role", "client");
-      sessionStorage.setItem("userId", data.userId);
       sessionStorage.setItem("email", data.email);
-      sessionStorage.setItem("name", data.name || "User");
+      sessionStorage.setItem("name", data.name);
+      sessionStorage.setItem("userId", data.userId);
 
       navigate("/client-dashboard");
     } catch {
@@ -57,21 +58,24 @@ function Logins() {
         <div className="login-page-container">
           <h2>Login</h2>
           {error && <p className="error-msg">{error}</p>}
+
           <form onSubmit={handleSubmit}>
             <input
               type="email"
-              placeholder="Enter Email"
+              placeholder="Email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
             />
+
             <input
               type="password"
-              placeholder="Enter Password"
+              placeholder="Password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
             />
+
             <button type="submit">Login</button>
           </form>
         </div>

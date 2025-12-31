@@ -2,17 +2,17 @@ import React from "react";
 import Navbar from "../components/Navbar";
 import Hero from "../components/Hero";
 import Information from "../components/Information";
-import Footer from "../components/Footer";
 import Leaning from "../components/Leaning";
+import Footer from "../components/Footer";
 
 function Home() {
   return (
     <div>
-        <Navbar />
+      <Navbar />
       <Hero />
-         <Information />
-        <Leaning /> 
-        <Footer />
+      <Information />
+      <Leaning />
+      <Footer />
     </div>
   );
 }

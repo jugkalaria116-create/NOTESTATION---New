@@ -1,73 +1,176 @@
-/* Registers.css - Dark Mode with Container Image & Golden Register Button */
+/* Registers.css - Dark Glass Theme with Golden Accent */
 
-html, body, #root {
+html,
+body,
+#root {
   height: 100%;
   margin: 0;
-  font-family: Arial, sans-serif;
-  background-color: #121212; /* dark page background */
-  color: #fff;
+  font-family: "Segoe UI", Arial, sans-serif;
+  background-color: #0f0f0f;
+  color: #ffffff;
 }
+
+/* =========================
+   PAGE CONTAINER
+========================= */
 
 .register-page-container {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  min-height: 80vh;
-  padding: 20px;
-  /* Container background image with dark overlay */
+  min-height: 85vh;
+  padding: 40px 20px;
+
   background-image: 
-    linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)),
-    url('https://images.unsplash.com/photo-1512820790803-83ca734da794?auto=format&fit=crop&w=1470&q=80');
+    linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)),
+    url("https://images.unsplash.com/photo-1512820790803-83ca734da794?auto=format&fit=crop&w=1470&q=80");
   background-size: cover;
   background-position: center;
-  border-radius: 12px;
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.5);
+
+  border-radius: 14px;
 }
+
+/* =========================
+   TITLE
+========================= */
 
 .register-page-container h2 {
-  margin-bottom: 20px;
-  font-size: 2rem;
-  color: #fff;
+  margin-bottom: 22px;
+  font-size: 2.1rem;
+  font-weight: 600;
+  letter-spacing: 1px;
+  color: #ffffff;
 }
 
-/* Form styling */
-form {
+/* =========================
+   FORM (GLASS CARD)
+========================= */
+
+.register-page-container form {
+  width: 100%;
+  max-width: 420px;
+  padding: 30px 28px;
+
+  background: rgba(25, 25, 25, 0.85);
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+
+  border-radius: 14px;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6);
+
   display: flex;
   flex-direction: column;
-  width: 100%;
-  max-width: 400px;
-  padding: 30px;
-  background: rgba(30, 30, 30, 0.85); /* dark semi-transparent form */
-  border-radius: 12px;
 }
 
-input {
-  padding: 12px 15px;
-  margin-bottom: 15px;
-  border: 1px solid #555;
-  border-radius: 8px;
-  font-size: 1rem;
-  background-color: #222;
-  color: #fff;
+/* =========================
+   INPUTS
+========================= */
+
+.register-page-container input {
+  padding: 14px 16px;
+  margin-bottom: 14px;
+
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+
+  background: rgba(255, 255, 255, 0.08);
+  color: #ffffff;
+
+  font-size: 15px;
+  outline: none;
+
+  transition: all 0.25s ease;
 }
 
-input::placeholder {
-  color: #bbb;
+.register-page-container input::placeholder {
+  color: #cfcfcf;
 }
 
-/* Register Button */
+.register-page-container input:focus {
+  border-color: #ffd700;
+  background: rgba(255, 255, 255, 0.12);
+}
+
+/* =========================
+   REGISTER BUTTON
+========================= */
+
 button[type="submit"] {
-  background-color: #FFD700; /* Golden yellow */
-  color: #000; /* Black text */
-  cursor: pointer;
-  transition: background-color 0.3s ease;
+  margin-top: 6px;
+  padding: 14px;
+
+  background: #ffd700;
+  color: #000000;
+
   border: none;
-  font-weight: bold;
-  padding: 12px 15px;
-  border-radius: 8px;
+  border-radius: 10px;
+
+  font-size: 16px;
+  font-weight: 700;
+  cursor: pointer;
+
+  transition: all 0.3s ease;
 }
 
 button[type="submit"]:hover {
-  background-color: #FFC107; /* Darker gold on hover */
+  background: #ffcc00;
+  transform: translateY(-1px);
+}
+
+/* =========================
+   LOGIN REDIRECT
+========================= */
+
+.login-redirect {
+  margin-top: 16px;
+  text-align: center;
+  font-size: 14px;
+  color: #dcdcdc;
+}
+
+.login-redirect a {
+  color: #ffd700;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.login-redirect a:hover {
+  text-decoration: underline;
+}
+
+/* =========================
+   MESSAGE STYLES
+========================= */
+
+.error-msg {
+  color: #ff4d4d;
+  background: rgba(255, 77, 77, 0.15);
+  padding: 10px;
+  border-radius: 8px;
+  margin-bottom: 12px;
+  text-align: center;
+}
+
+.success-msg {
+  color: #00ff99;
+  background: rgba(0, 255, 153, 0.15);
+  padding: 10px;
+  border-radius: 8px;
+  margin-bottom: 12px;
+  text-align: center;
+}
+
+/* =========================
+   RESPONSIVE
+========================= */
+
+@media (max-width: 480px) {
+  .register-page-container h2 {
+    font-size: 1.7rem;
+  }
+
+  .register-page-container form {
+    padding: 22px;
+  }
 }

@@ -1,11 +1,12 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom"; // <-- import this
+import { useNavigate, Link } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import "./Registers.css";
 
 function Registers() {
-  const navigate = useNavigate(); // <-- initialize navigate
+  const navigate = useNavigate();
+
   const [formData, setFormData] = useState({
     firstName: "",
     lastName: "",
@@ -13,6 +14,7 @@ function Registers() {
     password: "",
     confirmPassword: "",
   });
+
   const [message, setMessage] = useState({ text: "", type: "" });
 
   const handleChange = (e) => {
@@ -22,6 +24,7 @@ function Registers() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
     const { firstName, lastName, email, password, confirmPassword } = formData;
 
     if (!firstName || !lastName || !email || !password || !confirmPassword) {
@@ -34,7 +37,6 @@ function Registers() {
       return;
     }
 
-    // Send registration request to backend
     try {
       const res = await fetch("http://localhost:5000/register", {
         method: "POST",
@@ -52,14 +54,14 @@ function Registers() {
       if (res.ok) {
         setMessage({ text: data.message, type: "success" });
 
-        // Redirect to home page after 1 second
+        // ✅ Redirect to login page after success
         setTimeout(() => {
-          navigate("/"); // <-- redirect to home
+          navigate("/login");
         }, 1000);
       } else {
-        setMessage({ text: data.error, type: "error" });
+        setMessage({ text: data.error || "Registration failed", type: "error" });
       }
-    } catch (err) {
+    } catch (error) {
       setMessage({ text: "Server error!", type: "error" });
     }
   };
@@ -67,11 +69,16 @@ function Registers() {
   return (
     <>
       <Navbar />
+
       <div className="register-page-container">
         <h2>Register</h2>
 
         {message.text && (
-          <p className={message.type === "error" ? "error-msg" : "success-msg"}>
+          <p
+            className={
+              message.type === "error" ? "error-msg" : "success-msg"
+            }
+          >
             {message.text}
           </p>
         )}
@@ -84,6 +91,7 @@ function Registers() {
             value={formData.firstName}
             onChange={handleChange}
           />
+
           <input
             type="text"
             name="lastName"
@@ -91,6 +99,7 @@ function Registers() {
             value={formData.lastName}
             onChange={handleChange}
           />
+
           <input
             type="email"
             name="email"
@@ -98,6 +107,7 @@ function Registers() {
             value={formData.email}
             onChange={handleChange}
           />
+
           <input
             type="password"
             name="password"
@@ -105,6 +115,7 @@ function Registers() {
             value={formData.password}
             onChange={handleChange}
           />
+
           <input
             type="password"
             name="confirmPassword"
@@ -112,9 +123,17 @@ function Registers() {
             value={formData.confirmPassword}
             onChange={handleChange}
           />
+
           <button type="submit">Register</button>
+
+          {/* ✅ LOGIN LINK */}
+          <p className="login-redirect">
+            Already have an account?{" "}
+            <Link to="/login">Login here</Link>
+          </p>
         </form>
       </div>
+
       <Footer />
     </>
   );

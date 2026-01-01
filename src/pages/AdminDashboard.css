@@ -1,43 +1,95 @@
+/* =========================
+   ADMIN DASHBOARD – BLACK & GOLD THEME
+   (THEME ONLY, NO STRUCTURE CHANGES)
+========================= */
+
 .admin-dashboard {
   min-height: 100vh;
-  background: #0f1e16;
-  color: #fff;
+  background: #1c1c1c;            /* dark background */
+  color: #f5c542;                 /* gold text */
   padding: 40px;
+  font-family: "Segoe UI", system-ui, sans-serif;
 }
+
+/* =========================
+   HEADER
+========================= */
 
 .admin-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  margin-bottom: 40px;
 }
 
-.admin-header button {
-  background: #ff4d4d;
-  border: none;
-  padding: 10px 16px;
-  border-radius: 8px;
-  color: white;
-  cursor: pointer;
+.admin-header h1 {
+  font-size: 32px;
+  font-weight: 700;
+  color: #f5c542;
 }
+
+/* =========================
+   LOGOUT BUTTON
+========================= */
+
+.admin-header button {
+  background: #f5c542;
+  color: #000000;
+  border: none;
+  padding: 10px 18px;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.25s ease;
+}
+
+.admin-header button:hover {
+  background: #ffd966;
+}
+
+/* =========================
+   CARDS GRID
+========================= */
 
 .admin-cards {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
   gap: 25px;
-  margin-top: 40px;
 }
 
+/* =========================
+   ADMIN CARD
+========================= */
+
 .admin-card {
-  background: rgba(255,255,255,0.05);
+  background: #2a2a2a;
   padding: 30px;
-  border-radius: 16px;
+  border-radius: 14px;
   font-size: 18px;
   text-align: center;
   cursor: pointer;
-  transition: 0.3s;
+  color: #f5c542;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.6);
+  transition: all 0.3s ease;
 }
 
 .admin-card:hover {
-  background: rgba(0,255,153,0.15);
+  background: #303030;
+  color: #ffd966;
   transform: translateY(-4px);
+}
+
+/* =========================
+   RESPONSIVE
+========================= */
+
+@media (max-width: 768px) {
+  .admin-dashboard {
+    padding: 20px;
+  }
+
+  .admin-header h1 {
+    font-size: 26px;
+  }
 }

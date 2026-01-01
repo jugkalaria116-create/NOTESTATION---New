@@ -68,15 +68,45 @@ app.delete("/users/:id", (req, res) => {
   });
 });
 
-// ================= CONTACT (THIS WAS THE ISSUE) =================
+// ================= LOGIN (ADDED – REQUIRED) =================
+app.post("/login", (req, res) => {
+  const { email, password } = req.body;
 
-// SAVE CONTACT MESSAGE  ✅ FIXED TABLE NAME
+  const sql = `
+    SELECT id, fname, lname, email
+    FROM user
+    WHERE email = ? AND password = ?
+  `;
+
+  db.query(sql, [email, password], (err, results) => {
+    if (err) {
+      console.error("❌ LOGIN ERROR:", err);
+      return res.status(500).json({ message: "Server error" });
+    }
+
+    if (results.length === 0) {
+      return res.status(401).json({ message: "Invalid credentials" });
+    }
+
+    const user = results[0];
+
+    res.json({
+      userId: user.id,
+      name: `${user.fname} ${user.lname}`,
+      email: user.email,
+    });
+  });
+});
+
+// ================= CONTACT =================
+
+// SAVE CONTACT MESSAGE
 app.post("/contact", (req, res) => {
   const { name, email, subject, message } = req.body;
 
   const sql = `
     INSERT INTO \`contact\`
-    (\`Name\`, \`Email\`, \`Subject\`, \`Message\`, \`Created_at\`)
+    (\`Name\`, \`Email\`, \`Subject\`, \`contact_messages\`, \`Created_at\`)
     VALUES (?, ?, ?, ?, NOW())
   `;
 
@@ -89,16 +119,16 @@ app.post("/contact", (req, res) => {
   });
 });
 
-// GET ALL CONTACT MESSAGES (ADMIN)  ✅ FIXED TABLE NAME
+// GET ALL CONTACT MESSAGES (ADMIN)
 app.get("/admin/contact-messages", (req, res) => {
   const sql = `
     SELECT
       \`id\`,
-      \`Name\`        AS name,
-      \`Email\`       AS email,
-      \`Subject\`     AS subject,
-      \`Message\`     AS message,
-      \`Created_at\`  AS created_at
+      \`Name\`               AS name,
+      \`Email\`              AS email,
+      \`Subject\`            AS subject,
+      \`contact_messages\`   AS message,
+      \`Created_at\`         AS created_at
     FROM \`contact\`
     ORDER BY \`Created_at\` DESC
   `;
@@ -156,17 +186,13 @@ app.post("/notes", upload.single("upload_file"), (req, res) => {
     VALUES (?, ?, ?, ?, ?, NOW())
   `;
 
-  db.query(
-    sql,
-    [title, description, subject, email, fileName],
-    (err) => {
-      if (err) {
-        console.error("❌ NOTES INSERT ERROR:", err);
-        return res.status(500).json(err);
-      }
-      res.json({ success: true });
+  db.query(sql, [title, description, subject, email, fileName], (err) => {
+    if (err) {
+      console.error("❌ NOTES INSERT ERROR:", err);
+      return res.status(500).json(err);
     }
-  );
+    res.json({ success: true });
+  });
 });
 
 app.get("/notes", (req, res) => {

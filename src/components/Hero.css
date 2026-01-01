@@ -31,7 +31,6 @@
 
 .hero-content {
   text-align: center;
-  color: #ffffff;
   max-width: 850px;
   padding: 20px;
 }
@@ -45,14 +44,15 @@
   font-weight: 700;
   letter-spacing: 1px;
   margin-bottom: 12px;
+  color: #ffffff !important; /* Welcome to */
 }
 
 /* =========================
-   BRAND COLOR (GOLD)
+   BRAND TEXT (GOLD)
 ========================= */
 
-.brand {
-  color: #ffcc00; /* Gold theme color */
+.hero-content h1 .brand {
+  color: #ffcc00 !important; /* NoteStation */
 }
 
 /* =========================
@@ -64,28 +64,6 @@
   font-size: 1.15rem;
   line-height: 1.7;
   color: #dddddd;
-}
-
-/* =========================
-   HERO BUTTON (OPTIONAL)
-========================= */
-
-.hero-btn {
-  margin-top: 30px;
-  background: #ffcc00;
-  border: none;
-  padding: 12px 32px;
-  font-size: 1.1rem;
-  font-weight: 700;
-  border-radius: 25px;
-  cursor: pointer;
-  color: #000;
-  transition: all 0.3s ease;
-}
-
-.hero-btn:hover {
-  background: #e6b800;
-  transform: translateY(-2px);
 }
 
 /* =========================

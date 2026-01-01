@@ -30,38 +30,36 @@ function Notes() {
       (selectedSubject === "all" || note.subject === selectedSubject)
     )
     .sort((a, b) => {
-      if (sortOrder === "liked") return (b.likes_count || 0) - (a.likes_count || 0);
+      if (sortOrder === "liked") return (b.likes || 0) - (a.likes || 0);
       if (sortOrder === "downloaded") return (b.downloads_count || 0) - (a.downloads_count || 0);
-      if (sortOrder === "rated") return (b.avg_rating || 0) - (a.avg_rating || 0);
+      if (sortOrder === "rated") return (b.rating || 0) - (a.rating || 0);
       if (sortOrder === "oldest") return new Date(a.created_at) - new Date(b.created_at);
       return new Date(b.created_at) - new Date(a.created_at);
     });
 
+  // ❤️ LIKE
   const likeNote = async (id) => {
+    if (!userEmail) return alert("Please login to like notes");
+
     await fetch(`http://localhost:5000/notes/${id}/like`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email: userEmail }),
+      body: JSON.stringify({ userEmail }),
     });
+
     fetchNotes();
   };
 
+  // ⭐ RATE
   const rateNote = async (id, rating) => {
+    if (!userEmail) return alert("Please login to rate notes");
+
     await fetch(`http://localhost:5000/notes/${id}/rate`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email: userEmail, rating }),
+      body: JSON.stringify({ userEmail, rating }),
     });
-    fetchNotes();
-  };
 
-  const downloadNote = async (id, url) => {
-    await fetch(`http://localhost:5000/notes/${id}/download`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email: userEmail }),
-    });
-    window.open(url, "_blank");
     fetchNotes();
   };
 
@@ -73,7 +71,7 @@ function Notes() {
         <div className="container">
           <h1>All Notes</h1>
 
-          {/* SEARCH BAR */}
+          {/* SEARCH & FILTER */}
           <div className="search-bar">
             <input
               placeholder="Search..."
@@ -105,14 +103,17 @@ function Notes() {
                 <p><b>Subject:</b> {note.subject}</p>
 
                 <div className="note-stats">
-                  ❤️ {note.likes_count || 0}
+                  ❤️ {note.likes || 0}
                   &nbsp;⬇️ {note.downloads_count || 0}
 
                   <span className="rating-click">
-                    ⭐ {note.avg_rating || "0.0"}
+                    ⭐ {note.rating || "0.0"}
                     <div className="rating-popup">
                       {[1,2,3,4,5].map(star => (
-                        <span key={star} onClick={() => rateNote(note.id, star)}>
+                        <span
+                          key={star}
+                          onClick={() => rateNote(note.id, star)}
+                        >
                           ★
                         </span>
                       ))}
@@ -121,9 +122,15 @@ function Notes() {
                 </div>
 
                 <div className="note-actions">
-                  <button onClick={() => window.open(note.url, "_blank")}>View</button>
-                  <button onClick={() => downloadNote(note.id, note.url)}>Download</button>
-                  <button onClick={() => likeNote(note.id)}>❤️ Like</button>
+                  <button onClick={() => window.open(note.url, "_blank")}>
+                    View
+                  </button>
+                  <button onClick={() => window.open(note.url, "_blank")}>
+                    Download
+                  </button>
+                  <button onClick={() => likeNote(note.id)}>
+                    ❤️ Like
+                  </button>
                 </div>
               </div>
             ))}

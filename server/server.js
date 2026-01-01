@@ -68,7 +68,39 @@ app.delete("/users/:id", (req, res) => {
   });
 });
 
-// ================= LOGIN (ADDED – REQUIRED) =================
+// ================= REGISTER =================
+app.post("/register", (req, res) => {
+  const { fname, lname, email, password } = req.body;
+
+  const checkSql = "SELECT id FROM user WHERE email = ?";
+
+  db.query(checkSql, [email], (err, results) => {
+    if (err) {
+      console.error("❌ REGISTER CHECK ERROR:", err);
+      return res.status(500).json({ error: "Server error" });
+    }
+
+    if (results.length > 0) {
+      return res.status(400).json({ error: "Email already registered" });
+    }
+
+    const insertSql = `
+      INSERT INTO user (fname, lname, email, password)
+      VALUES (?, ?, ?, ?)
+    `;
+
+    db.query(insertSql, [fname, lname, email, password], (err) => {
+      if (err) {
+        console.error("❌ REGISTER INSERT ERROR:", err);
+        return res.status(500).json({ error: "Server error" });
+      }
+
+      res.json({ message: "Registration successful" });
+    });
+  });
+});
+
+// ================= LOGIN =================
 app.post("/login", (req, res) => {
   const { email, password } = req.body;
 
@@ -99,14 +131,12 @@ app.post("/login", (req, res) => {
 });
 
 // ================= CONTACT =================
-
-// SAVE CONTACT MESSAGE
 app.post("/contact", (req, res) => {
   const { name, email, subject, message } = req.body;
 
   const sql = `
-    INSERT INTO \`contact\`
-    (\`Name\`, \`Email\`, \`Subject\`, \`contact_messages\`, \`Created_at\`)
+    INSERT INTO contact
+    (Name, Email, Subject, contact_messages, Created_at)
     VALUES (?, ?, ?, ?, NOW())
   `;
 
@@ -119,18 +149,18 @@ app.post("/contact", (req, res) => {
   });
 });
 
-// GET ALL CONTACT MESSAGES (ADMIN)
+// GET CONTACT MESSAGES (ADMIN)
 app.get("/admin/contact-messages", (req, res) => {
   const sql = `
     SELECT
-      \`id\`,
-      \`Name\`               AS name,
-      \`Email\`              AS email,
-      \`Subject\`            AS subject,
-      \`contact_messages\`   AS message,
-      \`Created_at\`         AS created_at
-    FROM \`contact\`
-    ORDER BY \`Created_at\` DESC
+      id,
+      Name AS name,
+      Email AS email,
+      Subject AS subject,
+      contact_messages AS message,
+      Created_at AS created_at
+    FROM contact
+    ORDER BY Created_at DESC
   `;
 
   db.query(sql, (err, results) => {
@@ -144,7 +174,7 @@ app.get("/admin/contact-messages", (req, res) => {
 
 // DELETE CONTACT MESSAGE (ADMIN)
 app.delete("/admin/contact-messages/:id", (req, res) => {
-  const sql = "DELETE FROM `contact` WHERE `id` = ?";
+  const sql = "DELETE FROM contact WHERE id = ?";
 
   db.query(sql, [req.params.id], (err, result) => {
     if (err) {

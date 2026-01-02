@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom"; // <-- Import useNavigate
+import { useNavigate } from "react-router-dom";
 import "./ContactForm.css";
 
 const contactDetails = [
@@ -18,7 +18,7 @@ const ContactForm = () => {
   });
   const [status, setStatus] = useState("");
 
-  const navigate = useNavigate(); // <-- Initialize navigate
+  const navigate = useNavigate();
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -40,15 +40,11 @@ const ContactForm = () => {
         setStatus("✅ Message sent successfully!");
         setFormData({ name: "", email: "", subject: "", message: "" });
 
-        // Redirect to home page after 2 seconds
-        setTimeout(() => {
-          navigate("/"); // <-- Redirect
-        }, 2000);
+        setTimeout(() => navigate("/"), 2000);
       } else {
-        setStatus("❌ Failed to send message. Try again.");
+        setStatus("❌ Failed to send message.");
       }
-    } catch (error) {
-      console.error("Error:", error);
+    } catch {
       setStatus("⚠️ Server error.");
     }
   };
@@ -56,12 +52,14 @@ const ContactForm = () => {
   return (
     <section className="contact-section">
       <div className="contact-container">
-        {/* Left Column - Contact Details */}
+
+        {/* LEFT */}
         <div className="contact-details">
           <h2>CONTACT DETAILS</h2>
+
           <div className="details-grid">
-            {contactDetails.map((item, index) => (
-              <div className="detail-card" key={index}>
+            {contactDetails.map((item) => (
+              <div className="detail-card" key={item.title}> {/* ✅ FIXED */}
                 <div className="detail-icon">{item.icon}</div>
                 <h3>{item.title}</h3>
                 <p>{item.info}</p>
@@ -70,57 +68,27 @@ const ContactForm = () => {
           </div>
         </div>
 
-        {/* Right Column - Contact Form */}
+        {/* RIGHT */}
         <div className="contact-form">
           <h2>SEND MESSAGE</h2>
+
           <form onSubmit={handleSubmit}>
             <label>Your Name</label>
-            <input
-              type="text"
-              name="name"
-              placeholder="Write your Name"
-              value={formData.name}
-              onChange={handleChange}
-              className="upload-input"
-              required
-            />
+            <input name="name" value={formData.name} onChange={handleChange} required />
 
             <label>Your Email</label>
-            <input
-              type="email"
-              name="email"
-              placeholder="Write your Email Id"
-              value={formData.email}
-              onChange={handleChange}
-              className="upload-input"
-              required
-            />
+            <input name="email" type="email" value={formData.email} onChange={handleChange} required />
 
             <label>Subject</label>
-            <input
-              type="text"
-              name="subject"
-              placeholder="Write your subject"
-              value={formData.subject}
-              onChange={handleChange}
-              className="upload-input"
-              required
-            />
+            <input name="subject" value={formData.subject} onChange={handleChange} required />
 
             <label>Your Message</label>
-            <textarea
-              name="message"
-              placeholder="Write your message here..."
-              value={formData.message}
-              onChange={handleChange}
-              className="upload-textarea"   // ✅ styled same as Upload description
-              required
-            />
+            <textarea name="message" value={formData.message} onChange={handleChange} required />
 
-            <button type="submit" className="submit-btn">Send Message</button>
+            <button type="submit">Send Message</button>
           </form>
 
-          {status && <p className="status-msg">{status}</p>}
+          {status && <p>{status}</p>}
         </div>
       </div>
     </section>

@@ -21,25 +21,29 @@ function Notes() {
     fetchNotes();
   }, []);
 
-  const subjects = ["all", ...new Set(notes.map(n => n.subject))];
+  const subjects = ["all", ...new Set(notes.map((n) => n.subject))];
 
   const filteredNotes = notes
-    .filter(note =>
-      (note.title.toLowerCase().includes(searchText.toLowerCase()) ||
-        note.description.toLowerCase().includes(searchText.toLowerCase())) &&
-      (selectedSubject === "all" || note.subject === selectedSubject)
+    .filter(
+      (note) =>
+        (note.title.toLowerCase().includes(searchText.toLowerCase()) ||
+          note.description.toLowerCase().includes(searchText.toLowerCase())) &&
+        (selectedSubject === "all" || note.subject === selectedSubject)
     )
     .sort((a, b) => {
-      if (sortOrder === "liked") return (b.likes || 0) - (a.likes || 0);
-      if (sortOrder === "downloaded") return (b.downloads_count || 0) - (a.downloads_count || 0);
-      if (sortOrder === "rated") return (b.rating || 0) - (a.rating || 0);
-      if (sortOrder === "oldest") return new Date(a.created_at) - new Date(b.created_at);
+      if (sortOrder === "liked")
+        return (b.likes_count || 0) - (a.likes_count || 0);
+      if (sortOrder === "downloaded")
+        return (b.downloads_count || 0) - (a.downloads_count || 0);
+      if (sortOrder === "oldest")
+        return new Date(a.created_at) - new Date(b.created_at);
       return new Date(b.created_at) - new Date(a.created_at);
     });
 
   // ❤️ LIKE
   const likeNote = async (id) => {
-    if (!userEmail) return alert("Please login to like notes");
+    if (!id) return alert("Invalid note ID");
+    if (!userEmail) return alert("Please login");
 
     await fetch(`http://localhost:5000/notes/${id}/like`, {
       method: "POST",
@@ -50,16 +54,18 @@ function Notes() {
     fetchNotes();
   };
 
-  // ⭐ RATE
-  const rateNote = async (id, rating) => {
-    if (!userEmail) return alert("Please login to rate notes");
+  // ⬇️ DOWNLOAD
+  const downloadNote = async (note) => {
+    if (!note.id) return alert("Invalid note ID");
+    if (!userEmail) return alert("Please login");
 
-    await fetch(`http://localhost:5000/notes/${id}/rate`, {
+    await fetch(`http://localhost:5000/notes/${note.id}/download`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ userEmail, rating }),
+      body: JSON.stringify({ userEmail }),
     });
 
+    window.open(note.url, "_blank");
     fetchNotes();
   };
 
@@ -71,7 +77,6 @@ function Notes() {
         <div className="container">
           <h1>All Notes</h1>
 
-          {/* SEARCH & FILTER */}
           <div className="search-bar">
             <input
               placeholder="Search..."
@@ -79,53 +84,49 @@ function Notes() {
               onChange={(e) => setSearchText(e.target.value)}
             />
 
-            <select onChange={(e) => setSelectedSubject(e.target.value)}>
-              {subjects.map((s, i) => (
-                <option key={i}>{s}</option>
+            <select
+              value={selectedSubject}
+              onChange={(e) => setSelectedSubject(e.target.value)}
+            >
+              {subjects.map((s) => (
+                <option key={s} value={s}>
+                  {s}
+                </option>
               ))}
             </select>
 
-            <select onChange={(e) => setSortOrder(e.target.value)}>
+            <select
+              value={sortOrder}
+              onChange={(e) => setSortOrder(e.target.value)}
+            >
               <option value="newest">Newest</option>
               <option value="oldest">Oldest</option>
               <option value="liked">Most Liked</option>
               <option value="downloaded">Most Downloaded</option>
-              <option value="rated">Top Rated</option>
             </select>
           </div>
 
-          {/* NOTES */}
           <div className="card-grid">
-            {filteredNotes.map(note => (
-              <div className="note-card" key={note.id}>
+            {filteredNotes.map((note) => (
+              <div
+                className="note-card"
+                key={note.id ?? note.upload_file}
+              >
                 <h3>{note.title}</h3>
                 <p>{note.description}</p>
+
                 <p><b>Subject:</b> {note.subject}</p>
 
                 <div className="note-stats">
-                  ❤️ {note.likes || 0}
-                  &nbsp;⬇️ {note.downloads_count || 0}
-
-                  <span className="rating-click">
-                    ⭐ {note.rating || "0.0"}
-                    <div className="rating-popup">
-                      {[1,2,3,4,5].map(star => (
-                        <span
-                          key={star}
-                          onClick={() => rateNote(note.id, star)}
-                        >
-                          ★
-                        </span>
-                      ))}
-                    </div>
-                  </span>
+                  ❤️ {note.likes_count || 0}
+                  &nbsp;&nbsp;⬇️ {note.downloads_count || 0}
                 </div>
 
                 <div className="note-actions">
                   <button onClick={() => window.open(note.url, "_blank")}>
                     View
                   </button>
-                  <button onClick={() => window.open(note.url, "_blank")}>
+                  <button onClick={() => downloadNote(note)}>
                     Download
                   </button>
                   <button onClick={() => likeNote(note.id)}>

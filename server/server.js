@@ -37,80 +37,76 @@ db.connect((err) => {
 
 // ================= HEALTH CHECK =================
 app.get("/", (req, res) => {
-  res.send("🚀 Server running");
+  res.json({ message: "🚀 Server running" });
 });
 
 // ================= USERS =================
 app.get("/users", (req, res) => {
-  const sql = "SELECT id, fname, lname, email FROM user";
-  db.query(sql, (err, results) => {
-    if (err) return res.status(500).json(err);
-    res.json(results);
-  });
-});
-
-app.delete("/users/:id", (req, res) => {
-  db.query("DELETE FROM user WHERE id = ?", [req.params.id], (err, result) => {
-    if (err) return res.status(500).json(err);
-    res.json({ success: result.affectedRows > 0 });
-  });
+  db.query(
+    "SELECT id, fname, lname, email FROM user",
+    (err, results) => {
+      if (err) return res.status(500).json(err);
+      res.json(results);
+    }
+  );
 });
 
 // ================= REGISTER =================
 app.post("/register", (req, res) => {
   const { fname, lname, email, password } = req.body;
 
-  db.query("SELECT id FROM user WHERE email = ?", [email], (err, results) => {
-    if (err) return res.status(500).json({ error: "Server error" });
-    if (results.length > 0)
-      return res.status(400).json({ error: "Email already registered" });
+  if (!fname || !lname || !email || !password) {
+    return res.status(400).json({ error: "All fields are required" });
+  }
 
-    db.query(
-      "INSERT INTO user (fname, lname, email, password) VALUES (?, ?, ?, ?)",
-      [fname, lname, email, password],
-      (err) => {
-        if (err) return res.status(500).json({ error: "Server error" });
-        res.json({ message: "Registration successful" });
+  // check if user already exists
+  db.query(
+    "SELECT id FROM user WHERE email = ?",
+    [email],
+    (err, result) => {
+      if (err) return res.status(500).json(err);
+
+      if (result.length > 0) {
+        return res.status(409).json({ error: "Email already registered" });
       }
-    );
-  });
+
+      // insert user
+      db.query(
+        "INSERT INTO user (fname, lname, email, password) VALUES (?, ?, ?, ?)",
+        [fname, lname, email, password],
+        (err) => {
+          if (err) return res.status(500).json(err);
+
+          res.status(201).json({
+            message: "Registration successful",
+          });
+        }
+      );
+    }
+  );
 });
+
 
 // ================= LOGIN =================
 app.post("/login", (req, res) => {
   const { email, password } = req.body;
 
   db.query(
-    "SELECT id, fname, lname, email FROM user WHERE email = ? AND password = ?",
+    "SELECT fname, lname, email FROM user WHERE email = ? AND password = ?",
     [email, password],
     (err, results) => {
-      if (err) return res.status(500).json({ message: "Server error" });
+      if (err) return res.status(500).json(err);
       if (results.length === 0)
         return res.status(401).json({ message: "Invalid credentials" });
 
       const u = results[0];
       res.json({
-        userId: u.id,
         name: `${u.fname} ${u.lname}`,
         email: u.email,
+        role: "client",
       });
     }
   );
-});
-
-// ================= CONTACT =================
-app.post("/contact", (req, res) => {
-  const { name, email, subject, message } = req.body;
-
-  const sql = `
-    INSERT INTO contact (Name, Email, Subject, contact_messages, Created_at)
-    VALUES (?, ?, ?, ?, NOW())
-  `;
-
-  db.query(sql, [name, email, subject, message], (err) => {
-    if (err) return res.status(500).json(err);
-    res.json({ success: true });
-  });
 });
 
 // ================= FILE UPLOAD =================
@@ -140,8 +136,9 @@ app.post("/notes", upload.single("upload_file"), (req, res) => {
   const fileName = req.file.filename;
 
   const sql = `
-    INSERT INTO notes (title, description, subject, email, upload_file, created_at)
-    VALUES (?, ?, ?, ?, ?, NOW())
+    INSERT INTO notes
+    (title, description, subject, Email, upload_file, likes_count, downloads_count, avg_rating, created_at)
+    VALUES (?, ?, ?, ?, ?, 0, 0, 0, NOW())
   `;
 
   db.query(sql, [title, description, subject, email, fileName], (err) => {
@@ -150,30 +147,18 @@ app.post("/notes", upload.single("upload_file"), (req, res) => {
   });
 });
 
-// ================= NOTES FETCH (LIKES + RATINGS + DOWNLOADS) =================
+// ================= FETCH NOTES (LIKES + RATINGS + DOWNLOADS) =================
 app.get("/notes", (req, res) => {
   const sql = `
     SELECT
       n.*,
-
-      -- PDF URL
       CONCAT('http://localhost:5000/uploads/', n.upload_file) AS url,
 
-      -- TOTAL LIKES
-      (
-        SELECT COUNT(*)
-        FROM note_likes nl
-        WHERE nl.note_id = n.id
-      ) AS likes,
+      (SELECT COUNT(*) FROM note_likes nl WHERE nl.note_id = n.id) AS likes,
 
-      -- AVERAGE RATING
-      (
-        SELECT ROUND(AVG(nr.rating), 1)
-        FROM note_ratings nr
-        WHERE nr.note_id = n.id
-      ) AS rating,
+      (SELECT ROUND(AVG(nr.rating),1)
+       FROM note_ratings nr WHERE nr.note_id = n.id) AS rating,
 
-      -- TOTAL DOWNLOADS (if column exists)
       IFNULL(n.downloads_count, 0) AS downloads_count
 
     FROM notes n
@@ -181,10 +166,7 @@ app.get("/notes", (req, res) => {
   `;
 
   db.query(sql, (err, results) => {
-    if (err) {
-      console.error("❌ NOTES FETCH ERROR:", err);
-      return res.status(500).json(err);
-    }
+    if (err) return res.status(500).json(err);
     res.json(results);
   });
 });
@@ -199,8 +181,16 @@ app.post("/notes/:id/like", (req, res) => {
     VALUES (?, ?, NOW())
   `;
 
-  db.query(sql, [noteId, userEmail], (err) => {
+  db.query(sql, [noteId, userEmail], (err, result) => {
     if (err) return res.status(500).json(err);
+
+    if (result.affectedRows > 0) {
+      db.query(
+        "UPDATE notes SET likes_count = likes_count + 1 WHERE id = ?",
+        [noteId]
+      );
+    }
+
     res.json({ success: true });
   });
 });
@@ -218,8 +208,93 @@ app.post("/notes/:id/rate", (req, res) => {
 
   db.query(sql, [noteId, userEmail, rating, rating], (err) => {
     if (err) return res.status(500).json(err);
+
+    // update avg_rating
+    db.query(
+      `
+      UPDATE notes
+      SET avg_rating = (
+        SELECT ROUND(AVG(rating),1)
+        FROM note_ratings
+        WHERE note_id = ?
+      )
+      WHERE id = ?
+      `,
+      [noteId, noteId]
+    );
+
     res.json({ success: true });
   });
+});
+
+// ================= DOWNLOAD NOTE =================
+app.post("/notes/:id/download", (req, res) => {
+  const noteId = req.params.id;
+  const { userEmail } = req.body;
+
+  db.query(
+    `
+    INSERT IGNORE INTO note_downloads (note_id, user_email)
+    VALUES (?, ?)
+    `,
+    [noteId, userEmail],
+    (err, result) => {
+      if (err) return res.status(500).json(err);
+
+      if (result.affectedRows > 0) {
+        db.query(
+          "UPDATE notes SET downloads_count = downloads_count + 1 WHERE id = ?",
+          [noteId]
+        );
+      }
+
+      res.json({ success: true });
+    }
+  );
+});
+
+// ================= USER DASHBOARD STATS =================
+
+// notes uploaded by user
+app.get("/user/notes/:email", (req, res) => {
+  db.query(
+    "SELECT COUNT(*) AS totalNotes FROM notes WHERE LOWER(Email) = LOWER(?)",
+    [req.params.email],
+    (err, result) => {
+      if (err) return res.status(500).json(err);
+      res.json({ totalNotes: result[0].totalNotes });
+    }
+  );
+});
+
+// likes received on user notes
+app.get("/user/likes/:email", (req, res) => {
+  db.query(
+    `
+    SELECT IFNULL(SUM(likes_count),0) AS totalLikes
+    FROM notes WHERE LOWER(Email) = LOWER(?)
+    `,
+    [req.params.email],
+    (err, result) => {
+      if (err) return res.status(500).json(err);
+      res.json({ totalLikes: result[0].totalLikes });
+    }
+  );
+});
+
+// downloads received on user notes
+app.get("/user/downloads/:email", (req, res) => {
+  db.query(
+    `
+    SELECT IFNULL(SUM(downloads_count),0) AS totalDownloads
+    FROM notes WHERE LOWER(Email) = LOWER(?)
+    `,
+    [req.params.email],
+    (err, result) => {
+      if (err) return res.status(500).json(err);
+      res.json({ totalDownloads: result[0].totalDownloads });
+    }
+  );
 });
 
 // ================= START SERVER =================

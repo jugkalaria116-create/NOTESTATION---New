@@ -4,18 +4,42 @@ import "./ClientDashboard.css";
 
 function ClientDashboard() {
   const navigate = useNavigate();
+
   const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+
+  const [notes, setNotes] = useState(0);
+  const [likes, setLikes] = useState(0);
+  const [downloads, setDownloads] = useState(0);
 
   useEffect(() => {
-    const storedName = sessionStorage.getItem("name");
-    const role = sessionStorage.getItem("role");
+    const n = sessionStorage.getItem("name");
+    const e = sessionStorage.getItem("email");
+    const r = sessionStorage.getItem("role");
 
-    if (!storedName || role !== "client") {
+    if (!n || !e || r !== "client") {
       navigate("/login", { replace: true });
     } else {
-      setName(storedName);
+      setName(n);
+      setEmail(e);
     }
   }, [navigate]);
+
+  useEffect(() => {
+    if (!email) return;
+
+    fetch(`http://localhost:5000/user/notes/${email}`)
+      .then(res => res.json())
+      .then(d => setNotes(d.totalNotes));
+
+    fetch(`http://localhost:5000/user/likes/${email}`)
+      .then(res => res.json())
+      .then(d => setLikes(d.totalLikes));
+
+    fetch(`http://localhost:5000/user/downloads/${email}`)
+      .then(res => res.json())
+      .then(d => setDownloads(d.totalDownloads));
+  }, [email]);
 
   const logout = () => {
     sessionStorage.clear();
@@ -24,7 +48,6 @@ function ClientDashboard() {
 
   return (
     <div className="client-dashboard">
-      {/* Sidebar */}
       <aside className="client-sidebar">
         <h2 className="brand">NoteStation</h2>
 
@@ -34,25 +57,22 @@ function ClientDashboard() {
         </div>
 
         <nav>
-          <NavLink to="/" end>🏠 Home</NavLink>
+          <NavLink to="/">🏠 Home</NavLink>
           <NavLink to="/notes">📚 Browse Notes</NavLink>
-          <NavLink to="/upload">📤 Upload Notes</NavLink>
-          <NavLink to="/about">ℹ️ About</NavLink>
-          <NavLink to="/contact">📞 Contact</NavLink>
+          <NavLink to="/upload">📤 Upload</NavLink>
         </nav>
 
         <button className="logout-btn" onClick={logout}>Logout</button>
       </aside>
 
-      {/* Main */}
       <main className="client-main">
         <h1>Welcome, {name} 👋</h1>
-        <p>Explore notes, upload content, and learn smarter.</p>
+        <p>{email}</p>
 
         <div className="stats">
-          <div className="stat-card">📄 Total Notes<br /><span>—</span></div>
-          <div className="stat-card">❤️ Likes Given<br /><span>—</span></div>
-          <div className="stat-card">⬇️ Downloads<br /><span>—</span></div>
+          <div className="stat-card">📄 Your Notes<br /><span>{notes}</span></div>
+          <div className="stat-card">❤️ Likes Received<br /><span>{likes}</span></div>
+          <div className="stat-card">⬇️ Downloads<br /><span>{downloads}</span></div>
         </div>
       </main>
     </div>

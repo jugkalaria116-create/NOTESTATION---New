@@ -1,12 +1,13 @@
 import React, { useEffect, useState } from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 
-/* Components */
+/* Components (UNCHANGED) */
 import NoteForm from "./components/NoteForm";
 import NoteCard from "./components/NoteCard";
 
 /* Pages */
 import Logins from "./pages/Login";
+import Notes from "./pages/Notes";              // ✅ ADDED (IMPORTANT)
 import ClientDashboard from "./pages/ClientDashboard";
 import AdminDashboard from "./pages/AdminDashboard";
 
@@ -38,14 +39,16 @@ function NotesPage() {
   return (
     <div className="container">
       <h1>📝 Note Station</h1>
+
       <NoteForm note={editingNote} onSave={handleSave} />
+
       <div className="card-grid">
         {notes.map((note) => (
           <NoteCard
-            key={note._id}
+            key={note.id}
             note={note}
             onEdit={() => setEditingNote(note)}
-            onDelete={() => handleDelete(note._id)}
+            onDelete={() => handleDelete(note.id)}
           />
         ))}
       </div>
@@ -58,17 +61,13 @@ function App() {
   return (
     <BrowserRouter>
       <Routes>
-        {/* Login */}
         <Route path="/" element={<Logins />} />
         <Route path="/login" element={<Logins />} />
 
-        {/* Notes */}
-        <Route path="/notes" element={<NotesPage />} />
+        {/* ✅ FIXED: route now uses Notes.jsx */}
+        <Route path="/notes" element={<Notes />} />
 
-        {/* Client Dashboard */}
         <Route path="/client-dashboard" element={<ClientDashboard />} />
-
-        {/* Admin Dashboard */}
         <Route path="/admin" element={<AdminDashboard />} />
       </Routes>
     </BrowserRouter>

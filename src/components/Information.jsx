@@ -27,9 +27,10 @@ const Information = () => {
   return (
     <section className="info-section">
       <h2 className="info-title">What You Can Do on NoteStation</h2>
+
       <div className="info-cards">
-        {infoCards.map((card, index) => (
-          <div className="info-card" key={index}>
+        {infoCards.map((card) => (
+          <div className="info-card" key={card.title}>
             <div className="info-icon">{card.icon}</div>
             <h3>{card.title}</h3>
             <p>{card.description}</p>

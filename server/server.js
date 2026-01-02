@@ -42,13 +42,10 @@ app.get("/", (req, res) => {
 
 // ================= USERS =================
 app.get("/users", (req, res) => {
-  db.query(
-    "SELECT id, fname, lname, email FROM user",
-    (err, results) => {
-      if (err) return res.status(500).json(err);
-      res.json(results);
-    }
-  );
+  db.query("SELECT id, fname, lname, email FROM user", (err, results) => {
+    if (err) return res.status(500).json(err);
+    res.json(results);
+  });
 });
 
 // ================= REGISTER =================
@@ -59,33 +56,21 @@ app.post("/register", (req, res) => {
     return res.status(400).json({ error: "All fields are required" });
   }
 
-  // check if user already exists
-  db.query(
-    "SELECT id FROM user WHERE email = ?",
-    [email],
-    (err, result) => {
-      if (err) return res.status(500).json(err);
+  db.query("SELECT id FROM user WHERE email = ?", [email], (err, result) => {
+    if (err) return res.status(500).json(err);
+    if (result.length > 0)
+      return res.status(409).json({ error: "Email already registered" });
 
-      if (result.length > 0) {
-        return res.status(409).json({ error: "Email already registered" });
+    db.query(
+      "INSERT INTO user (fname, lname, email, password) VALUES (?, ?, ?, ?)",
+      [fname, lname, email, password],
+      (err) => {
+        if (err) return res.status(500).json(err);
+        res.json({ success: true });
       }
-
-      // insert user
-      db.query(
-        "INSERT INTO user (fname, lname, email, password) VALUES (?, ?, ?, ?)",
-        [fname, lname, email, password],
-        (err) => {
-          if (err) return res.status(500).json(err);
-
-          res.status(201).json({
-            message: "Registration successful",
-          });
-        }
-      );
-    }
-  );
+    );
+  });
 });
-
 
 // ================= LOGIN =================
 app.post("/login", (req, res) => {
@@ -147,20 +132,21 @@ app.post("/notes", upload.single("upload_file"), (req, res) => {
   });
 });
 
-// ================= FETCH NOTES (LIKES + RATINGS + DOWNLOADS) =================
+// ================= FETCH NOTES (🔥 FIXED ID ISSUE) =================
 app.get("/notes", (req, res) => {
   const sql = `
     SELECT
-      n.*,
-      CONCAT('http://localhost:5000/uploads/', n.upload_file) AS url,
-
-      (SELECT COUNT(*) FROM note_likes nl WHERE nl.note_id = n.id) AS likes,
-
-      (SELECT ROUND(AVG(nr.rating),1)
-       FROM note_ratings nr WHERE nr.note_id = n.id) AS rating,
-
-      IFNULL(n.downloads_count, 0) AS downloads_count
-
+      n.ID AS id,                    -- 🔥 THIS FIXES INVALID NOTE ID
+      n.title,
+      n.description,
+      n.subject,
+      n.Email,
+      n.upload_file,
+      n.likes_count,
+      n.downloads_count,
+      n.avg_rating,
+      n.created_at,
+      CONCAT('http://localhost:5000/uploads/', n.upload_file) AS url
     FROM notes n
     ORDER BY n.created_at DESC
   `;
@@ -176,61 +162,31 @@ app.post("/notes/:id/like", (req, res) => {
   const { userEmail } = req.body;
   const noteId = req.params.id;
 
-  const sql = `
+  db.query(
+    `
     INSERT IGNORE INTO note_likes (note_id, user_email, created_at)
     VALUES (?, ?, NOW())
-  `;
+    `,
+    [noteId, userEmail],
+    (err, result) => {
+      if (err) return res.status(500).json(err);
 
-  db.query(sql, [noteId, userEmail], (err, result) => {
-    if (err) return res.status(500).json(err);
+      if (result.affectedRows > 0) {
+        db.query(
+          "UPDATE notes SET likes_count = likes_count + 1 WHERE ID = ?",
+          [noteId]
+        );
+      }
 
-    if (result.affectedRows > 0) {
-      db.query(
-        "UPDATE notes SET likes_count = likes_count + 1 WHERE id = ?",
-        [noteId]
-      );
+      res.json({ success: true });
     }
-
-    res.json({ success: true });
-  });
-});
-
-// ================= RATE NOTE =================
-app.post("/notes/:id/rate", (req, res) => {
-  const { userEmail, rating } = req.body;
-  const noteId = req.params.id;
-
-  const sql = `
-    INSERT INTO note_ratings (note_id, user_email, rating, created_at)
-    VALUES (?, ?, ?, NOW())
-    ON DUPLICATE KEY UPDATE rating = ?, created_at = NOW()
-  `;
-
-  db.query(sql, [noteId, userEmail, rating, rating], (err) => {
-    if (err) return res.status(500).json(err);
-
-    // update avg_rating
-    db.query(
-      `
-      UPDATE notes
-      SET avg_rating = (
-        SELECT ROUND(AVG(rating),1)
-        FROM note_ratings
-        WHERE note_id = ?
-      )
-      WHERE id = ?
-      `,
-      [noteId, noteId]
-    );
-
-    res.json({ success: true });
-  });
+  );
 });
 
 // ================= DOWNLOAD NOTE =================
 app.post("/notes/:id/download", (req, res) => {
-  const noteId = req.params.id;
   const { userEmail } = req.body;
+  const noteId = req.params.id;
 
   db.query(
     `
@@ -243,7 +199,7 @@ app.post("/notes/:id/download", (req, res) => {
 
       if (result.affectedRows > 0) {
         db.query(
-          "UPDATE notes SET downloads_count = downloads_count + 1 WHERE id = ?",
+          "UPDATE notes SET downloads_count = downloads_count + 1 WHERE ID = ?",
           [noteId]
         );
       }
@@ -254,8 +210,6 @@ app.post("/notes/:id/download", (req, res) => {
 });
 
 // ================= USER DASHBOARD STATS =================
-
-// notes uploaded by user
 app.get("/user/notes/:email", (req, res) => {
   db.query(
     "SELECT COUNT(*) AS totalNotes FROM notes WHERE LOWER(Email) = LOWER(?)",
@@ -267,7 +221,6 @@ app.get("/user/notes/:email", (req, res) => {
   );
 });
 
-// likes received on user notes
 app.get("/user/likes/:email", (req, res) => {
   db.query(
     `
@@ -282,7 +235,6 @@ app.get("/user/likes/:email", (req, res) => {
   );
 });
 
-// downloads received on user notes
 app.get("/user/downloads/:email", (req, res) => {
   db.query(
     `

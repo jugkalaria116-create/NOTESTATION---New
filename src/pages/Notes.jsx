@@ -11,41 +11,43 @@ function Notes() {
 
   const userEmail = sessionStorage.getItem("email");
 
+  // ================= FETCH NOTES =================
   const fetchNotes = async () => {
     const res = await fetch("http://localhost:5000/notes");
     const data = await res.json();
-    setNotes(data);
+    setNotes(Array.isArray(data) ? data : []);
   };
 
   useEffect(() => {
     fetchNotes();
   }, []);
 
-  const subjects = ["all", ...new Set(notes.map((n) => n.subject))];
+  const subjects = ["all", ...new Set(notes.map(n => n.subject))];
 
   const filteredNotes = notes
-    .filter(
-      (note) =>
-        (note.title.toLowerCase().includes(searchText.toLowerCase()) ||
-          note.description.toLowerCase().includes(searchText.toLowerCase())) &&
-        (selectedSubject === "all" || note.subject === selectedSubject)
+    .filter(note =>
+      (note.title?.toLowerCase().includes(searchText.toLowerCase()) ||
+        note.description?.toLowerCase().includes(searchText.toLowerCase())) &&
+      (selectedSubject === "all" || note.subject === selectedSubject)
     )
     .sort((a, b) => {
-      if (sortOrder === "liked")
-        return (b.likes_count || 0) - (a.likes_count || 0);
+      if (sortOrder === "liked") return (b.likes_count ?? 0) - (a.likes_count ?? 0);
       if (sortOrder === "downloaded")
-        return (b.downloads_count || 0) - (a.downloads_count || 0);
+        return (b.downloads_count ?? 0) - (a.downloads_count ?? 0);
       if (sortOrder === "oldest")
         return new Date(a.created_at) - new Date(b.created_at);
       return new Date(b.created_at) - new Date(a.created_at);
     });
 
-  // ❤️ LIKE
-  const likeNote = async (id) => {
-    if (!id) return alert("Invalid note ID");
+  // ❤️ LIKE (HARD SAFE)
+  const likeNote = async (note) => {
+    if (!note || !note.id) {
+      console.error("NOTE OBJECT:", note);
+      return alert("Invalid note ID");
+    }
     if (!userEmail) return alert("Please login");
 
-    await fetch(`http://localhost:5000/notes/${id}/like`, {
+    await fetch(`http://localhost:5000/notes/${note.id}/like`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ userEmail }),
@@ -54,9 +56,12 @@ function Notes() {
     fetchNotes();
   };
 
-  // ⬇️ DOWNLOAD
+  // ⬇️ DOWNLOAD (HARD SAFE)
   const downloadNote = async (note) => {
-    if (!note.id) return alert("Invalid note ID");
+    if (!note || !note.id) {
+      console.error("NOTE OBJECT:", note);
+      return alert("Invalid note ID");
+    }
     if (!userEmail) return alert("Please login");
 
     await fetch(`http://localhost:5000/notes/${note.id}/download`, {
@@ -89,9 +94,7 @@ function Notes() {
               onChange={(e) => setSelectedSubject(e.target.value)}
             >
               {subjects.map((s) => (
-                <option key={s} value={s}>
-                  {s}
-                </option>
+                <option key={s} value={s}>{s}</option>
               ))}
             </select>
 
@@ -108,18 +111,14 @@ function Notes() {
 
           <div className="card-grid">
             {filteredNotes.map((note) => (
-              <div
-                className="note-card"
-                key={note.id ?? note.upload_file}
-              >
+              <div className="note-card" key={note.id}>
                 <h3>{note.title}</h3>
                 <p>{note.description}</p>
-
                 <p><b>Subject:</b> {note.subject}</p>
 
                 <div className="note-stats">
-                  ❤️ {note.likes_count || 0}
-                  &nbsp;&nbsp;⬇️ {note.downloads_count || 0}
+                  ❤️ {note.likes_count ?? 0}
+                  &nbsp;&nbsp;⬇️ {note.downloads_count ?? 0}
                 </div>
 
                 <div className="note-actions">
@@ -129,13 +128,14 @@ function Notes() {
                   <button onClick={() => downloadNote(note)}>
                     Download
                   </button>
-                  <button onClick={() => likeNote(note.id)}>
+                  <button onClick={() => likeNote(note)}>
                     ❤️ Like
                   </button>
                 </div>
               </div>
             ))}
           </div>
+
         </div>
       </div>
 

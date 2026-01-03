@@ -60,6 +60,8 @@ function ClientDashboard() {
           <NavLink to="/">🏠 Home</NavLink>
           <NavLink to="/notes">📚 Browse Notes</NavLink>
           <NavLink to="/upload">📤 Upload</NavLink>
+          <NavLink to="/contact">🌐 Contact Us</NavLink>
+          <NavLink to="/about">📘 About Us</NavLink>
         </nav>
 
         <button className="logout-btn" onClick={logout}>Logout</button>

@@ -132,11 +132,11 @@ app.post("/notes", upload.single("upload_file"), (req, res) => {
   });
 });
 
-// ================= FETCH NOTES (🔥 FIXED ID ISSUE) =================
+// ================= FETCH NOTES =================
 app.get("/notes", (req, res) => {
   const sql = `
     SELECT
-      n.ID AS id,                    -- 🔥 THIS FIXES INVALID NOTE ID
+      n.ID AS id,
       n.title,
       n.description,
       n.subject,
@@ -249,8 +249,20 @@ app.get("/user/downloads/:email", (req, res) => {
   );
 });
 
+// ================= ADMIN - VIEW CONTACT MESSAGES (FINAL FIX) =================
+app.get("/admin/contact-messages", (req, res) => {
+  db.query("SELECT * FROM contact ORDER BY id DESC", (err, results) => {
+    if (err) {
+      console.error("❌ FETCH CONTACT ERROR:", err.sqlMessage);
+      return res.status(500).json({ error: err.sqlMessage });
+    }
+    res.json(results);
+  });
+});
+
 // ================= START SERVER =================
 const PORT = 5000;
 app.listen(PORT, () => {
   console.log(`🚀 Server running on http://localhost:${PORT}`);
 });
+  

@@ -6,6 +6,7 @@ const ViewMessages = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
+  // ================= FETCH MESSAGES =================
   useEffect(() => {
     fetch("http://localhost:5000/admin/contact-messages")
       .then((res) => {
@@ -22,6 +23,7 @@ const ViewMessages = () => {
       });
   }, []);
 
+  // ================= DELETE MESSAGE =================
   const handleDelete = (id) => {
     if (!window.confirm("Delete this message?")) return;
 
@@ -32,6 +34,7 @@ const ViewMessages = () => {
     });
   };
 
+  // ================= UI STATES =================
   if (loading) return <p className="no-messages">Loading...</p>;
   if (error) return <p className="no-messages">{error}</p>;
 
@@ -54,6 +57,7 @@ const ViewMessages = () => {
               <th>Action</th>
             </tr>
           </thead>
+
           <tbody>
             {messages.map((m) => (
               <tr key={m.id}>
@@ -62,7 +66,14 @@ const ViewMessages = () => {
                 <td>{m.email}</td>
                 <td>{m.subject}</td>
                 <td>{m.message}</td>
-                <td>{new Date(m.created_at).toLocaleString()}</td>
+
+                {/* ✅ FIXED DATE */}
+                <td>
+                  {m.date
+                    ? new Date(m.date).toLocaleString()
+                    : "—"}
+                </td>
+
                 <td>
                   <button
                     className="delete-btn"
@@ -81,3 +92,4 @@ const ViewMessages = () => {
 };
 
 export default ViewMessages;
+  

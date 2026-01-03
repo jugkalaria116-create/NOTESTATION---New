@@ -249,9 +249,21 @@ app.get("/user/downloads/:email", (req, res) => {
   );
 });
 
-// ================= ADMIN - VIEW CONTACT MESSAGES (FINAL FIX) =================
+// ================= ADMIN - CONTACT MESSAGES (FIXED & FINAL) =================
 app.get("/admin/contact-messages", (req, res) => {
-  db.query("SELECT * FROM contact ORDER BY id DESC", (err, results) => {
+  const sql = `
+    SELECT
+      id,
+      Name AS name,
+      Email AS email,
+      Subject AS subject,
+      contact_messages AS message,
+      Created_at AS date
+    FROM contact
+    ORDER BY id DESC
+  `;
+
+  db.query(sql, (err, results) => {
     if (err) {
       console.error("❌ FETCH CONTACT ERROR:", err.sqlMessage);
       return res.status(500).json({ error: err.sqlMessage });
@@ -265,4 +277,3 @@ const PORT = 5000;
 app.listen(PORT, () => {
   console.log(`🚀 Server running on http://localhost:${PORT}`);
 });
-  

@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import "./Login.css";
@@ -14,7 +14,7 @@ function Logins() {
     e.preventDefault();
     setError("");
 
-    // ADMIN LOGIN
+    // ================= ADMIN LOGIN =================
     if (email === "admin@gmail.com" && password === "Admin@123") {
       sessionStorage.clear();
       sessionStorage.setItem("role", "admin");
@@ -24,7 +24,7 @@ function Logins() {
       return;
     }
 
-    // CLIENT LOGIN
+    // ================= CLIENT LOGIN =================
     try {
       const res = await fetch("http://localhost:5000/login", {
         method: "POST",
@@ -54,32 +54,40 @@ function Logins() {
   return (
     <div className="page-container">
       <Navbar />
-      <div className="content-wrap">
-        <div className="login-page-container">
-          <h2>Login</h2>
-          {error && <p className="error-msg">{error}</p>}
 
-          <form onSubmit={handleSubmit}>
-            <input
-              type="email"
-              placeholder="Email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
-            />
+      {/* SAME STRUCTURE AS REGISTER */}
+      <div className="login-page-container">
+        <h2>Login</h2>
 
-            <input
-              type="password"
-              placeholder="Password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-            />
+        {error && <p className="error-msg">{error}</p>}
 
-            <button type="submit">Login</button>
-          </form>
-        </div>
+        <form onSubmit={handleSubmit}>
+          <input
+            type="email"
+            placeholder="Email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            required
+          />
+
+          <input
+            type="password"
+            placeholder="Password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            required
+          />
+
+          <button type="submit">Login</button>
+
+          {/* SAME AS REGISTER */}
+          <p className="register-link">
+            Not registered?{" "}
+            <Link to="/register">Create an account</Link>
+          </p>
+        </form>
       </div>
+
       <Footer />
     </div>
   );

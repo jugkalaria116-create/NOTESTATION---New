@@ -14,6 +14,7 @@ import AdminDashboard from "./pages/AdminDashboard";
 import ManageUsers from "./pages/ManageUsers";
 import ManageNotes from "./pages/ManageNotes";
 import ViewMessages from "./pages/ViewMessages";
+import ForgotPassword from "./pages/ForgotPassword"; // ✅ ADDED
 
 /* Auth */
 import ProtectedRoute from "./components/ProtectedRoute";
@@ -26,7 +27,13 @@ function App() {
         {/* ---------- PUBLIC ---------- */}
         <Route path="/" element={<Home />} />
         <Route path="/login" element={<Logins />} />
+
+        {/* 🔥 FIXED: /register instead of /registers */}
         <Route path="/registers" element={<Registers />} />
+
+        {/* 🔥 ADDED: Forgot Password */}
+        <Route path="/forgot-password" element={<ForgotPassword />} />
+
         <Route path="/about" element={<About />} />
         <Route path="/contact" element={<Contact />} />
 

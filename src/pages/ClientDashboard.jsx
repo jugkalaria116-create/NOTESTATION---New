@@ -57,7 +57,7 @@ function ClientDashboard() {
         </div>
 
         <nav>
-          <NavLink to="/">🏠 Home</NavLink>
+          {/* <NavLink to="/">🏠 Home</NavLink> */}
           <NavLink to="/notes">📚 Browse Notes</NavLink>
           <NavLink to="/upload">📤 Upload</NavLink>
           <NavLink to="/contact">🌐 Contact Us</NavLink>

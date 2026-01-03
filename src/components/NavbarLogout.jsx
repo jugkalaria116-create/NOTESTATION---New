@@ -7,7 +7,7 @@ function Navbar() {
     <nav className="navbar">
       {/* Logo */}
       <div className="navbar-logo">
-        <Link to="/" className="logo-text">
+        <Link className="logo-text">
           NOTESTATION
         </Link>
       </div>
@@ -24,7 +24,7 @@ function Navbar() {
           <Link to="/registers">Register</Link>
         </li>
         <li>
-           <Link to="/contact">Contact</Link>
+           <Link to="/login">Contact</Link>
         </li>
         <li>
           <Link to="/about">About Us</Link>
@@ -33,7 +33,7 @@ function Navbar() {
 
       {/* Login Button */}
       <div className="login-btn">
-        <Link to="/logout">Logout</Link>
+        <Link to="/client-dashboard">Dashboard</Link>
       </div>
     </nav>
   );

@@ -5,7 +5,6 @@ import "./AdminDashboard.css";
 function AdminDashboard() {
   const navigate = useNavigate();
 
-  // ===== STATE =====
   const [totalNotes, setTotalNotes] = useState(0);
   const [userStats, setUserStats] = useState([]);
   const [popularNotes, setPopularNotes] = useState([]);
@@ -17,25 +16,19 @@ function AdminDashboard() {
     }
   }, [navigate]);
 
-  // ===== FETCH DASHBOARD DATA =====
+  // ===== FETCH ADMIN DATA =====
   useEffect(() => {
-    // Total notes
     fetch("http://localhost:5000/admin/total-notes")
       .then((res) => res.json())
-      .then((data) => setTotalNotes(data.totalNotes))
-      .catch(() => {});
+      .then((data) => setTotalNotes(data.totalNotes));
 
-    // User-wise downloads
     fetch("http://localhost:5000/admin/user-note-stats")
       .then((res) => res.json())
-      .then((data) => setUserStats(data))
-      .catch(() => {});
+      .then((data) => setUserStats(data));
 
-    // Most popular notes
     fetch("http://localhost:5000/admin/note-download-stats")
       .then((res) => res.json())
-      .then((data) => setPopularNotes(data))
-      .catch(() => {});
+      .then((data) => setPopularNotes(data));
   }, []);
 
   const logout = () => {
@@ -65,10 +58,9 @@ function AdminDashboard() {
           💬 View Messages
         </div>
 
-        {/* ✅ NEW CARD */}
         <div className="admin-card stats-card">
-          📚 Total Notes
-          <span>{totalNotes}</span>
+          <p>📚 Total Notes</p>
+          <h2>{totalNotes}</h2>
         </div>
       </div>
 
@@ -85,18 +77,24 @@ function AdminDashboard() {
             </tr>
           </thead>
           <tbody>
-            {userStats.map((u, i) => (
-              <tr key={i}>
-                <td>{u.Email}</td>
-                <td>{u.totalNotes}</td>
-                <td>{u.totalDownloads}</td>
+            {userStats.length === 0 ? (
+              <tr>
+                <td colSpan="3">No data available</td>
               </tr>
-            ))}
+            ) : (
+              userStats.map((u, i) => (
+                <tr key={i}>
+                  <td>{u.Email}</td>
+                  <td>{u.totalNotes}</td>
+                  <td>{u.totalDownloads}</td>
+                </tr>
+              ))
+            )}
           </tbody>
         </table>
       </section>
 
-      {/* ===== POPULAR NOTES ===== */}
+      {/* ===== MOST POPULAR NOTES ===== */}
       <section className="admin-section">
         <h2>🔥 Most Popular Notes</h2>
 
@@ -109,13 +107,19 @@ function AdminDashboard() {
             </tr>
           </thead>
           <tbody>
-            {popularNotes.map((n, i) => (
-              <tr key={i}>
-                <td>{n.title}</td>
-                <td>{n.Email}</td>
-                <td>{n.downloads_count}</td>
+            {popularNotes.length === 0 ? (
+              <tr>
+                <td colSpan="3">No data available</td>
               </tr>
-            ))}
+            ) : (
+              popularNotes.map((n, i) => (
+                <tr key={i}>
+                  <td>{n.title}</td>
+                  <td>{n.Email}</td>
+                  <td>{n.downloads_count}</td>
+                </tr>
+              ))
+            )}
           </tbody>
         </table>
       </section>

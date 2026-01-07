@@ -223,10 +223,7 @@ app.get("/user/notes/:email", (req, res) => {
 
 app.get("/user/likes/:email", (req, res) => {
   db.query(
-    `
-    SELECT IFNULL(SUM(likes_count),0) AS totalLikes
-    FROM notes WHERE LOWER(Email) = LOWER(?)
-    `,
+    "SELECT IFNULL(SUM(likes_count),0) AS totalLikes FROM notes WHERE LOWER(Email) = LOWER(?)",
     [req.params.email],
     (err, result) => {
       if (err) return res.status(500).json(err);
@@ -237,10 +234,7 @@ app.get("/user/likes/:email", (req, res) => {
 
 app.get("/user/downloads/:email", (req, res) => {
   db.query(
-    `
-    SELECT IFNULL(SUM(downloads_count),0) AS totalDownloads
-    FROM notes WHERE LOWER(Email) = LOWER(?)
-    `,
+    "SELECT IFNULL(SUM(downloads_count),0) AS totalDownloads FROM notes WHERE LOWER(Email) = LOWER(?)",
     [req.params.email],
     (err, result) => {
       if (err) return res.status(500).json(err);
@@ -249,7 +243,47 @@ app.get("/user/downloads/:email", (req, res) => {
   );
 });
 
-// ================= ADMIN - CONTACT MESSAGES (FIXED & FINAL) =================
+// ================= ADMIN ANALYTICS =================
+
+// TOTAL NOTES
+app.get("/admin/total-notes", (req, res) => {
+  db.query("SELECT COUNT(*) AS totalNotes FROM notes", (err, result) => {
+    if (err) return res.status(500).json(err);
+    res.json({ totalNotes: result[0].totalNotes });
+  });
+});
+
+// USER WISE NOTES + DOWNLOADS
+app.get("/admin/user-note-stats", (req, res) => {
+  const sql = `
+    SELECT Email,
+           COUNT(ID) AS totalNotes,
+           IFNULL(SUM(downloads_count),0) AS totalDownloads
+    FROM notes
+    GROUP BY Email
+    ORDER BY totalNotes DESC
+  `;
+  db.query(sql, (err, result) => {
+    if (err) return res.status(500).json(err);
+    res.json(result);
+  });
+});
+
+// MOST POPULAR NOTES
+app.get("/admin/note-download-stats", (req, res) => {
+  const sql = `
+    SELECT title, Email, downloads_count
+    FROM notes
+    ORDER BY downloads_count DESC
+    LIMIT 10
+  `;
+  db.query(sql, (err, result) => {
+    if (err) return res.status(500).json(err);
+    res.json(result);
+  });
+});
+
+// ================= ADMIN - CONTACT MESSAGES =================
 app.get("/admin/contact-messages", (req, res) => {
   const sql = `
     SELECT
@@ -264,10 +298,7 @@ app.get("/admin/contact-messages", (req, res) => {
   `;
 
   db.query(sql, (err, results) => {
-    if (err) {
-      console.error("❌ FETCH CONTACT ERROR:", err.sqlMessage);
-      return res.status(500).json({ error: err.sqlMessage });
-    }
+    if (err) return res.status(500).json(err);
     res.json(results);
   });
 });

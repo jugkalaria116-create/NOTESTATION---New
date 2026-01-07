@@ -13,25 +13,33 @@ function Notes() {
 
   // ================= FETCH NOTES =================
   const fetchNotes = async () => {
-    const res = await fetch("http://localhost:5000/notes");
-    const data = await res.json();
-    setNotes(Array.isArray(data) ? data : []);
+    try {
+      const res = await fetch("http://localhost:5000/notes");
+      const data = await res.json();
+      setNotes(Array.isArray(data) ? data : []);
+    } catch (err) {
+      console.error("Fetch error:", err);
+    }
   };
 
   useEffect(() => {
     fetchNotes();
   }, []);
 
-  const subjects = ["all", ...new Set(notes.map(n => n.subject))];
+  const subjects = ["all", ...new Set(notes.map((n) => n.subject))];
 
   const filteredNotes = notes
-    .filter(note =>
-      (note.title?.toLowerCase().includes(searchText.toLowerCase()) ||
-        note.description?.toLowerCase().includes(searchText.toLowerCase())) &&
-      (selectedSubject === "all" || note.subject === selectedSubject)
+    .filter(
+      (note) =>
+        (note.title?.toLowerCase().includes(searchText.toLowerCase()) ||
+          note.description
+            ?.toLowerCase()
+            .includes(searchText.toLowerCase())) &&
+        (selectedSubject === "all" || note.subject === selectedSubject)
     )
     .sort((a, b) => {
-      if (sortOrder === "liked") return (b.likes_count ?? 0) - (a.likes_count ?? 0);
+      if (sortOrder === "liked")
+        return (b.likes_count ?? 0) - (a.likes_count ?? 0);
       if (sortOrder === "downloaded")
         return (b.downloads_count ?? 0) - (a.downloads_count ?? 0);
       if (sortOrder === "oldest")
@@ -39,12 +47,9 @@ function Notes() {
       return new Date(b.created_at) - new Date(a.created_at);
     });
 
-  // ❤️ LIKE (HARD SAFE)
+  // ❤️ LIKE
   const likeNote = async (note) => {
-    if (!note || !note.id) {
-      console.error("NOTE OBJECT:", note);
-      return alert("Invalid note ID");
-    }
+    if (!note?.id) return alert("Invalid note");
     if (!userEmail) return alert("Please login");
 
     await fetch(`http://localhost:5000/notes/${note.id}/like`, {
@@ -56,12 +61,9 @@ function Notes() {
     fetchNotes();
   };
 
-  // ⬇️ DOWNLOAD (HARD SAFE)
+  // ⬇️ DOWNLOAD
   const downloadNote = async (note) => {
-    if (!note || !note.id) {
-      console.error("NOTE OBJECT:", note);
-      return alert("Invalid note ID");
-    }
+    if (!note?.id) return alert("Invalid note");
     if (!userEmail) return alert("Please login");
 
     await fetch(`http://localhost:5000/notes/${note.id}/download`, {
@@ -82,9 +84,10 @@ function Notes() {
         <div className="container">
           <h1>All Notes</h1>
 
+          {/* SEARCH & FILTER */}
           <div className="search-bar">
             <input
-              placeholder="Search..."
+              placeholder="Search notes..."
               value={searchText}
               onChange={(e) => setSearchText(e.target.value)}
             />
@@ -94,7 +97,9 @@ function Notes() {
               onChange={(e) => setSelectedSubject(e.target.value)}
             >
               {subjects.map((s) => (
-                <option key={s} value={s}>{s}</option>
+                <option key={s} value={s}>
+                  {s}
+                </option>
               ))}
             </select>
 
@@ -109,12 +114,15 @@ function Notes() {
             </select>
           </div>
 
+          {/* NOTES GRID */}
           <div className="card-grid">
             {filteredNotes.map((note) => (
               <div className="note-card" key={note.id}>
                 <h3>{note.title}</h3>
                 <p>{note.description}</p>
-                <p><b>Subject:</b> {note.subject}</p>
+                <p>
+                  <b>Subject:</b> {note.subject}
+                </p>
 
                 <div className="note-stats">
                   ❤️ {note.likes_count ?? 0}
@@ -122,20 +130,30 @@ function Notes() {
                 </div>
 
                 <div className="note-actions">
-                  <button onClick={() => window.open(note.url, "_blank")}>
-                    View
+                  <button
+                    className="view-btn"
+                    onClick={() => window.open(note.url, "_blank")}
+                  >
+                    👁 View
                   </button>
-                  <button onClick={() => downloadNote(note)}>
-                    Download
+
+                  <button
+                    className="download-btn"
+                    onClick={() => downloadNote(note)}
+                  >
+                    ⬇ Download
                   </button>
-                  <button onClick={() => likeNote(note)}>
+
+                  <button
+                    className="like-btn"
+                    onClick={() => likeNote(note)}
+                  >
                     ❤️ Like
                   </button>
                 </div>
               </div>
             ))}
           </div>
-
         </div>
       </div>
 

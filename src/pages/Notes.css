@@ -16,7 +16,7 @@
   margin-bottom: 30px;
 }
 
-/* 🔍 Search bar */
+/* 🔍 Search Bar */
 .search-bar {
   display: flex;
   gap: 14px;
@@ -58,7 +58,7 @@
   background: rgba(255, 255, 255, 0.05);
   padding: 20px;
   border-radius: 14px;
-  box-shadow: 0 4px 14px rgba(0,0,0,0.4);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.4);
 }
 
 .note-card h3 {
@@ -76,77 +76,69 @@
   gap: 14px;
   margin: 12px 0;
   font-size: 15px;
-  align-items: center;
-}
-
-/* ⭐ Rating */
-.rating-click {
-  position: relative;
-  cursor: pointer;
-}
-
-.rating-popup {
-  position: absolute;
-  bottom: 28px;
-  left: 0;
-  background: #121212;
-  padding: 6px 8px;
-  border-radius: 6px;
-  display: none;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.4);
-}
-
-.rating-popup span {
-  font-size: 18px;
-  color: #777;
-  cursor: pointer;
-  transition: 0.2s;
-}
-
-.rating-popup span:hover {
-  color: #ffd166;
-  transform: scale(1.2);
-}
-
-.rating-click:hover .rating-popup {
-  display: block;
 }
 
 /* 🔘 Buttons */
 .note-actions {
   display: flex;
-  gap: 10px;
-  margin-top: 15px;
+  gap: 12px;
+  margin-top: 16px;
+  flex-wrap: wrap;
 }
 
+.note-actions button {
+  flex: 1;
+  min-width: 90px;
+  border: none;
+  padding: 10px 14px;
+  font-size: 14px;
+  font-weight: 600;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.35);
+}
+
+/* 👁 VIEW */
 .view-btn {
-  background: #3498db;
+  background: linear-gradient(135deg, #3498db, #5dade2);
   color: #fff;
-  padding: 8px 12px;
-  border-radius: 6px;
-  border: none;
-  cursor: pointer;
 }
 
+.view-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 18px rgba(52, 152, 219, 0.6);
+}
+
+/* ⬇ DOWNLOAD */
 .download-btn {
-  background: #2ecc71;
+  background: linear-gradient(135deg, #2ecc71, #58d68d);
   color: #fff;
-  padding: 8px 12px;
-  border-radius: 6px;
-  border: none;
-  cursor: pointer;
 }
 
+.download-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 18px rgba(46, 204, 113, 0.6);
+}
+
+/* ❤️ LIKE */
 .like-btn {
-  background: #ff6b6b;
+  background: linear-gradient(135deg, #ff6b6b, #ff8787);
   color: #fff;
-  padding: 8px 12px;
-  border-radius: 6px;
-  border: none;
-  cursor: pointer;
 }
 
-button:disabled {
+.like-btn:hover {
+  transform: translateY(-2px) scale(1.05);
+  box-shadow: 0 6px 18px rgba(255, 107, 107, 0.7);
+}
+
+/* CLICK EFFECT */
+.note-actions button:active {
+  transform: scale(0.95);
+}
+
+/* DISABLED */
+.note-actions button:disabled {
   opacity: 0.5;
   cursor: not-allowed;
 }

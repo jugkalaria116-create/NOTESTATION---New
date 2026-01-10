@@ -14,7 +14,7 @@
 .contact-container {
   display: flex;
   gap: 50px;
-  backdrop-filter: blur(15px);
+  /* backdrop-filter: blur(15px); */
   background: rgba(0,0,0,0.6);
   padding: 40px;
   border-radius: 15px;

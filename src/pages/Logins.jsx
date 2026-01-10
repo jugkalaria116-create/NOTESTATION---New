@@ -83,7 +83,7 @@ function Logins() {
           {/* SAME AS REGISTER */}
           <p className="register-link">
             Not registered?{" "}
-            <Link to="/register">Create an account</Link>
+            <Link to="/registers">Create an account</Link>
           </p>
         </form>
       </div>

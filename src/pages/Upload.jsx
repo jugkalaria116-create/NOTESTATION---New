@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import Navbar from "../components/Navbar";
-import Footer from "../components/Footer";
+// import Navbar from "../components/Navbar";
+// import Footer from "../components/Footer";
 import "./Upload.css";
 
 function Upload() {
@@ -56,7 +56,7 @@ function Upload() {
 
   return (
     <div className="upload-page-container">
-      <Navbar />
+      {/* <Navbar /> */}
 
       <div className="upload-content-wrap">
         <form className="upload-container" onSubmit={handleSubmit}>
@@ -102,7 +102,7 @@ function Upload() {
         </form>
       </div>
 
-      <Footer />
+      {/* <Footer /> */}
     </div>
   );
 }

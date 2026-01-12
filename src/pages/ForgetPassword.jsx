@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
-import Navbar from "../components/Navbar";
-import Footer from "../components/Footer";
+// import Navbar from "../components/Navbar";
+// import Footer from "../components/Footer";
 import "./ForgetPassword.css";
 
 function ForgotPassword() {
@@ -28,7 +28,7 @@ function ForgotPassword() {
 
   return (
     <div className="page-container">
-      <Navbar />
+      {/* <Navbar /> */}
 
       <div className="content-wrap">
         <div className="forgot-page-container">
@@ -59,7 +59,7 @@ function ForgotPassword() {
         </div>
       </div>
 
-      <Footer />
+      {/* <Footer /> */}
     </div>
   );
 }

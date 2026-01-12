@@ -1,6 +1,4 @@
 import React, { useEffect, useState } from "react";
-import Navbar from "../components/NavbarLogout";
-import Footer from "../components/Footer";
 import "./Notes.css";
 
 function Notes() {
@@ -78,8 +76,6 @@ function Notes() {
 
   return (
     <div className="page-container">
-      <Navbar />
-
       <div className="content-wrap">
         <div className="container">
           <h1>All Notes</h1>
@@ -154,10 +150,9 @@ function Notes() {
               </div>
             ))}
           </div>
+
         </div>
       </div>
-
-      <Footer />
     </div>
   );
 }

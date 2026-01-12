@@ -31,17 +31,17 @@ function AdminDashboard() {
       .then((data) => setPopularNotes(data));
   }, []);
 
-  const logout = () => {
-    sessionStorage.clear();
-    navigate("/login");
-  };
+  // const logout = () => {
+  //   sessionStorage.clear();
+  //   navigate("/login");
+  // };
 
   return (
     <div className="admin-dashboard">
       {/* ===== HEADER ===== */}
       <header className="admin-header">
         <h1>Admin Dashboard</h1>
-        <button onClick={logout}>Logout</button>
+        {/* <button onClick={logout}>Logout</button> */}
       </header>
 
       {/* ===== TOP CARDS ===== */}

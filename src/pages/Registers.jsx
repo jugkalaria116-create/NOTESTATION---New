@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
-import Navbar from "../components/Navbar";
-import Footer from "../components/Footer";
+// import Navbar from "../components/Navbar";
+// import Footer from "../components/Footer";
 import "./Registers.css";
 
 function Registers() {
@@ -68,7 +68,7 @@ function Registers() {
 
   return (
     <>
-      <Navbar />
+      {/* <Navbar /> */}
 
       <div className="register-page-container">
         <h2>Register</h2>
@@ -134,7 +134,7 @@ function Registers() {
         </form>
       </div>
 
-      <Footer />
+      {/* <Footer /> */}
     </>
   );
 }

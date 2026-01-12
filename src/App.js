@@ -1,6 +1,10 @@
 import React from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 
+import Navbar from "./components/Navbar";
+import Footer from "./components/Footer";
+import ProtectedRoute from "./components/ProtectedRoute";
+
 /* Pages */
 import Home from "./pages/Home";
 import Logins from "./pages/Logins";
@@ -15,22 +19,20 @@ import ManageUsers from "./pages/ManageUsers";
 import ManageNotes from "./pages/ManageNotes";
 import ViewMessages from "./pages/ViewMessages";
 
-/* Auth */
-import ProtectedRoute from "./components/ProtectedRoute";
-
 function App() {
   return (
     <BrowserRouter>
-      <Routes>
+      <Navbar />
 
-        {/* ---------- PUBLIC ---------- */}
+      <Routes>
+        {/* PUBLIC */}
         <Route path="/" element={<Home />} />
         <Route path="/login" element={<Logins />} />
         <Route path="/registers" element={<Registers />} />
         <Route path="/about" element={<About />} />
         <Route path="/contact" element={<Contact />} />
 
-        {/* ---------- CLIENT ---------- */}
+        {/* CLIENT */}
         <Route
           path="/client-dashboard"
           element={
@@ -58,7 +60,7 @@ function App() {
           }
         />
 
-        {/* ---------- ADMIN ---------- */}
+        {/* ADMIN */}
         <Route
           path="/admin"
           element={
@@ -95,10 +97,10 @@ function App() {
           }
         />
 
-        {/* ---------- FALLBACK ---------- */}
         <Route path="*" element={<h2>404 – Page Not Found</h2>} />
-
       </Routes>
+
+      <Footer />
     </BrowserRouter>
   );
 }

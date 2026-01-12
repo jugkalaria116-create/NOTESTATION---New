@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
-import Navbar from "../components/Navbar";
-import Footer from "../components/Footer";
+// import Navbar from "../components/Navbar";
+// import Footer from "../components/Footer";
 import "./Login.css";
 
 function Logins() {
@@ -53,7 +53,7 @@ function Logins() {
 
   return (
     <div className="page-container">
-      <Navbar />
+      {/* <Navbar /> */}
 
       {/* SAME STRUCTURE AS REGISTER */}
       <div className="login-page-container">
@@ -88,7 +88,7 @@ function Logins() {
         </form>
       </div>
 
-      <Footer />
+      {/* <Footer /> */}
     </div>
   );
 }

@@ -1,40 +1,43 @@
-/* ===== ROOT ===== */
+/* ================= ROOT ================= */
 .client-page {
   display: flex;
   min-height: 100vh;
-  background: #020617;
+  background: radial-gradient(circle at top, #020617, #020617);
   color: #e5e7eb;
   font-family: "Segoe UI", system-ui, sans-serif;
 }
 
-/* ===== SIDEBAR ===== */
+/* ================= SIDEBAR ================= */
 .client-sidebar {
   width: 260px;
-  background: linear-gradient(180deg, #052e16, #020617);
-  padding: 24px;
+  background: linear-gradient(180deg, #022c22, #020617);
+  padding: 28px 22px;
+  box-shadow: 2px 0 16px rgba(0,0,0,0.6);
 }
 
 .profile {
   text-align: center;
-  margin-bottom: 30px;
+  margin-bottom: 34px;
 }
 
 .avatar {
-  width: 70px;
-  height: 70px;
+  width: 74px;
+  height: 74px;
   border-radius: 50%;
-  background: #22c55e;
+  background: linear-gradient(135deg, #22c55e, #16a34a);
   color: #022c22;
-  font-size: 28px;
-  font-weight: 700;
+  font-size: 30px;
+  font-weight: 800;
   display: flex;
   align-items: center;
   justify-content: center;
-  margin: 0 auto 10px;
+  margin: 0 auto 12px;
+  box-shadow: 0 10px 30px rgba(34,197,94,0.35);
 }
 
 .profile-name {
-  font-size: 16px;
+  font-size: 17px;
+  font-weight: 600;
 }
 
 .client-sidebar nav {
@@ -46,37 +49,41 @@
 .client-sidebar a {
   text-decoration: none;
   color: #e5e7eb;
-  padding: 12px 14px;
-  border-radius: 10px;
-  transition: 0.25s;
+  padding: 13px 16px;
+  border-radius: 12px;
+  transition: all 0.25s ease;
+  border: 1px solid transparent;
 }
 
 .client-sidebar a:hover,
 .client-sidebar a.active {
   background: #1e293b;
+  border-color: #334155;
+  transform: translateX(4px);
 }
 
-/* ===== MAIN ===== */
+/* ================= MAIN ================= */
 .client-main {
   flex: 1;
-  padding: 32px 40px;
+  padding: 36px 44px;
 }
 
 .welcome {
-  font-size: 28px;
+  font-size: 30px;
+  font-weight: 700;
   color: #facc15;
 }
 
 .email {
   color: #94a3b8;
-  margin-bottom: 20px;
+  margin-bottom: 28px;
 }
 
-/* ===== QUICK ACTIONS ===== */
+/* ================= QUICK ACTIONS ================= */
 .quick-actions {
   display: flex;
   gap: 18px;
-  margin: 26px 0 36px;
+  margin: 28px 0 40px;
   flex-wrap: wrap;
 }
 
@@ -84,10 +91,11 @@
   background: #020617;
   border: 1px solid #1e293b;
   color: #e5e7eb;
-  padding: 14px 22px;
+  padding: 14px 24px;
   border-radius: 999px;
   cursor: pointer;
-  transition: 0.25s;
+  transition: all 0.25s ease;
+  font-size: 14px;
 }
 
 .quick-btn:hover {
@@ -99,55 +107,73 @@
   background: linear-gradient(135deg, #22c55e, #16a34a);
   border: none;
   color: #022c22;
-  font-weight: 600;
+  font-weight: 700;
+  box-shadow: 0 8px 25px rgba(34,197,94,0.4);
 }
 
-/* ===== STATS ===== */
+/* ================= STATS ================= */
 .stats-row {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-  gap: 20px;
-  margin-bottom: 40px;
+  gap: 22px;
+  margin-bottom: 44px;
 }
 
 .stat-card {
-  background: #020617;
+  background: linear-gradient(145deg, #020617, #020617);
   border: 1px solid #1e293b;
-  padding: 22px;
-  border-radius: 16px;
+  padding: 24px;
+  border-radius: 18px;
   text-align: center;
-  font-size: 16px;
+  font-size: 15px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.55);
 }
 
 .stat-card span {
   display: block;
-  font-size: 28px;
-  font-weight: 700;
+  font-size: 32px;
+  font-weight: 800;
   color: #22c55e;
-  margin-top: 6px;
+  margin-top: 8px;
 }
 
-/* ===== CHARTS ===== */
+/* ================= CHARTS ================= */
 .charts {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-  gap: 26px;
+  gap: 28px;
 }
 
 .chart-card {
   background: #020617;
   border: 1px solid #1e293b;
-  padding: 20px;
-  border-radius: 16px;
+  padding: 22px 20px;
+  border-radius: 18px;
+  box-shadow: 0 10px 28px rgba(0,0,0,0.6);
 }
 
 .chart-card h3 {
   text-align: center;
-  margin-bottom: 12px;
-  color: #e5e7eb;
+  margin-bottom: 14px;
+  font-size: 15px;
+  font-weight: 600;
+  color: #f1f5f9;
 }
 
-/* ===== RESPONSIVE ===== */
+/* fixes bar/line chart stretching */
+.chart-card canvas {
+  max-height: 280px !important;
+}
+
+/* ================= EMPTY / PLACEHOLDER ================= */
+.chart-placeholder {
+  text-align: center;
+  color: #94a3b8;
+  font-size: 14px;
+  padding: 48px 0;
+}
+
+/* ================= RESPONSIVE ================= */
 @media (max-width: 900px) {
   .client-page {
     flex-direction: column;
@@ -155,5 +181,27 @@
 
   .client-sidebar {
     width: 100%;
+    box-shadow: none;
   }
+
+  .client-sidebar nav {
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .client-sidebar a {
+    transform: none;
+  }
+}
+.chart-card {
+  position: relative;
+  height: 320px;          /* ✅ fixed card height */
+  overflow: hidden;       /* ✅ prevents overflow */
+}
+
+/* Chart canvas fix */
+.chart-card canvas {
+  max-width: 100% !important;
+  max-height: 100% !important;
 }

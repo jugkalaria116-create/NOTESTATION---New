@@ -394,6 +394,25 @@ app.get("/client/chart/likes/:email", (req, res) => {
     res.json(result);
   });
 });
+// ================= DAILY LIKES (CLIENT DASHBOARD) =================
+app.get("/user/likes-daily/:email", (req, res) => {
+  const sql = `
+    SELECT 
+      DATE(l.created_at) AS day,
+      COUNT(*) AS totalLikes
+    FROM note_likes l
+    JOIN notes n ON n.ID = l.note_id
+    WHERE LOWER(n.Email) = LOWER(?)
+    GROUP BY DATE(l.created_at)
+    ORDER BY day DESC
+    LIMIT 7
+  `;
+
+  db.query(sql, [req.params.email], (err, result) => {
+    if (err) return res.status(500).json(err);
+    res.json(result.reverse()); // reverse for chart order
+  });
+});
 
 
 // ================= START SERVER =================

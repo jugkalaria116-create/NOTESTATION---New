@@ -9,16 +9,19 @@ import {
   LinearScale,
   LineElement,
   PointElement,
+  ArcElement,        // ✅ ADDED
   Tooltip,
   Legend,
 } from "chart.js";
-import { Line } from "react-chartjs-2";
+
+import { Line, Doughnut } from "react-chartjs-2"; // ✅ ADDED Doughnut
 
 ChartJS.register(
   CategoryScale,
   LinearScale,
   LineElement,
   PointElement,
+  ArcElement,        // ✅ ADDED
   Tooltip,
   Legend
 );
@@ -71,7 +74,7 @@ function ClientDashboard() {
     setDownloadTrend([0, 1, 2, 4, 6]);
   }, [email]);
 
-  /* ===== CHART DATA ===== */
+  /* ===== LINE CHART DATA ===== */
   const likesChart = {
     labels: ["Mon", "Tue", "Wed", "Thu", "Fri"],
     datasets: [
@@ -96,6 +99,18 @@ function ClientDashboard() {
     ],
   };
 
+  /* ===== PIE CHART DATA (✅ NEW) ===== */
+  const pieChart = {
+    labels: ["Notes", "Likes", "Downloads"],
+    datasets: [
+      {
+        data: [notes, likes, downloads],
+        backgroundColor: ["#22c55e", "#f43f5e", "#38bdf8"],
+        borderWidth: 0,
+      },
+    ],
+  };
+
   return (
     <div className="client-page">
       {/* ===== SIDEBAR ===== */}
@@ -116,7 +131,7 @@ function ClientDashboard() {
       {/* ===== MAIN ===== */}
       <main className="client-main">
         <h1 className="welcome">
-          Welcome, {name} <span>👋</span>
+          Welcome Back, {name} <span>👋</span>
         </h1>
         <p className="email">{email}</p>
 
@@ -152,6 +167,13 @@ function ClientDashboard() {
           <div className="chart-card">
             <h3>Downloads Trend</h3>
             <Line data={downloadsChart} />
+          </div>
+
+          
+          {/* ✅ PIE CHART ADDED */}
+          <div className="chart-card">
+            <h3>Activity Overview</h3>
+            <Doughnut data={pieChart} />
           </div>
         </section>
       </main>

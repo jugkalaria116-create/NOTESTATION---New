@@ -41,15 +41,15 @@ function ClientDashboard() {
       .then(d => setDownloads(d.totalDownloads));
   }, [email]);
 
-  const logout = () => {
-    sessionStorage.clear();
-    navigate("/login");
-  };
+  // const logout = () => {
+  //   sessionStorage.clear();
+  //   navigate("/login");
+  // };
 
   return (
     <div className="client-dashboard">
       <aside className="client-sidebar">
-        <h2 className="brand">NoteStation</h2>
+        {/* <h2 className="brand">NoteStation</h2> */}
 
         <div className="profile">
           <div className="avatar">{name.charAt(0).toUpperCase()}</div>
@@ -64,7 +64,7 @@ function ClientDashboard() {
           <NavLink to="/about">📘 About Us</NavLink>
         </nav>
 
-        <button className="logout-btn" onClick={logout}>Logout</button>
+        {/* <button className="logout-btn" onClick={logout}>Logout</button> */}
       </aside>
 
       <main className="client-main">

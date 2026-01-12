@@ -2,6 +2,27 @@ import React, { useEffect, useState } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 import "./ClientDashboard.css";
 
+/* ===== CHART.JS ===== */
+import {
+  Chart as ChartJS,
+  CategoryScale,
+  LinearScale,
+  LineElement,
+  PointElement,
+  Tooltip,
+  Legend,
+} from "chart.js";
+import { Line } from "react-chartjs-2";
+
+ChartJS.register(
+  CategoryScale,
+  LinearScale,
+  LineElement,
+  PointElement,
+  Tooltip,
+  Legend
+);
+
 function ClientDashboard() {
   const navigate = useNavigate();
 
@@ -12,6 +33,10 @@ function ClientDashboard() {
   const [likes, setLikes] = useState(0);
   const [downloads, setDownloads] = useState(0);
 
+  const [likesTrend, setLikesTrend] = useState([]);
+  const [downloadTrend, setDownloadTrend] = useState([]);
+
+  /* ===== AUTH CHECK ===== */
   useEffect(() => {
     const n = sessionStorage.getItem("name");
     const e = sessionStorage.getItem("email");
@@ -25,6 +50,7 @@ function ClientDashboard() {
     }
   }, [navigate]);
 
+  /* ===== DASHBOARD STATS ===== */
   useEffect(() => {
     if (!email) return;
 
@@ -39,43 +65,95 @@ function ClientDashboard() {
     fetch(`http://localhost:5000/user/downloads/${email}`)
       .then(res => res.json())
       .then(d => setDownloads(d.totalDownloads));
+
+    /* demo trend (replace with real APIs later) */
+    setLikesTrend([1, 2, 3, 5, 7]);
+    setDownloadTrend([0, 1, 2, 4, 6]);
   }, [email]);
 
-  // const logout = () => {
-  //   sessionStorage.clear();
-  //   navigate("/login");
-  // };
+  /* ===== CHART DATA ===== */
+  const likesChart = {
+    labels: ["Mon", "Tue", "Wed", "Thu", "Fri"],
+    datasets: [
+      {
+        label: "Likes",
+        data: likesTrend,
+        borderColor: "#f43f5e",
+        tension: 0.4,
+      },
+    ],
+  };
+
+  const downloadsChart = {
+    labels: ["Mon", "Tue", "Wed", "Thu", "Fri"],
+    datasets: [
+      {
+        label: "Downloads",
+        data: downloadTrend,
+        borderColor: "#38bdf8",
+        tension: 0.4,
+      },
+    ],
+  };
 
   return (
-    <div className="client-dashboard">
+    <div className="client-page">
+      {/* ===== SIDEBAR ===== */}
       <aside className="client-sidebar">
-        {/* <h2 className="brand">NoteStation</h2> */}
-
         <div className="profile">
-          <div className="avatar">{name.charAt(0).toUpperCase()}</div>
-          <p>{name}</p>
+          <div className="avatar">{name.charAt(0)}</div>
+          <p className="profile-name">{name}</p>
         </div>
 
         <nav>
-          {/* <NavLink to="/">🏠 Home</NavLink> */}
           <NavLink to="/notes">📚 Browse Notes</NavLink>
           <NavLink to="/upload">📤 Upload</NavLink>
-          <NavLink to="/contact">🌐 Contact Us</NavLink>
-          <NavLink to="/about">📘 About Us</NavLink>
+          <NavLink to="/contact">💬 Contact</NavLink>
+          <NavLink to="/about">ℹ️ About</NavLink>
         </nav>
-
-        {/* <button className="logout-btn" onClick={logout}>Logout</button> */}
       </aside>
 
+      {/* ===== MAIN ===== */}
       <main className="client-main">
-        <h1>Welcome, {name} 👋</h1>
-        <p>{email}</p>
+        <h1 className="welcome">
+          Welcome, {name} <span>👋</span>
+        </h1>
+        <p className="email">{email}</p>
 
-        <div className="stats">
-          <div className="stat-card">📄 Your Notes<br /><span>{notes}</span></div>
-          <div className="stat-card">❤️ Likes Received<br /><span>{likes}</span></div>
-          <div className="stat-card">⬇️ Downloads<br /><span>{downloads}</span></div>
+        {/* ===== QUICK ACTIONS ===== */}
+        <div className="quick-actions">
+          <button className="quick-btn primary" onClick={() => navigate("/upload")}>
+            ⬆ Upload Notes
+          </button>
+
+          <button className="quick-btn" onClick={() => navigate("/notes")}>
+            📚 Browse Notes
+          </button>
+
+          <button className="quick-btn" onClick={() => navigate("/contact")}>
+            💬 Contact Support
+          </button>
         </div>
+
+        {/* ===== STATS ===== */}
+        <div className="stats-row">
+          <div className="stat-card">📄 Your Notes <span>{notes}</span></div>
+          <div className="stat-card">❤️ Likes <span>{likes}</span></div>
+          <div className="stat-card">⬇ Downloads <span>{downloads}</span></div>
+        </div>
+
+        {/* ===== CHARTS ===== */}
+        <section className="charts">
+          <div className="chart-card">
+            <h3>Likes Trend</h3>
+            <Line data={likesChart} />
+          </div>
+
+          <div className="chart-card">
+            <h3>Downloads Trend</h3>
+            <Line data={downloadsChart} />
+          </div>
+        </section>
       </main>
     </div>
   );

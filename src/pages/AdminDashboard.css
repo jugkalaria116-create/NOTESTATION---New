@@ -2,31 +2,31 @@
 .admin-page {
   display: flex;
   min-height: 100vh;
-  background: #0f172a; /* dark slate */
+  background: radial-gradient(circle at top, #020617, #000);
   color: #e5e7eb;
   font-family: "Segoe UI", system-ui, sans-serif;
 }
 
 /* ================= SIDEBAR ================= */
 .admin-sidebar {
-  width: 240px;
-  background: #020617;
-  padding: 20px;
-  box-shadow: 2px 0 10px rgba(0,0,0,0.6);
+  width: 260px;
+  background: linear-gradient(180deg, #020617, #020617);
+  padding: 26px 22px;
+  border-right: 1px solid #1e293b;
 }
 
 .admin-nav {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 14px;
 }
 
 .admin-nav button {
   background: transparent;
   border: 1px solid #1e293b;
   color: #e5e7eb;
-  padding: 12px 14px;
-  border-radius: 10px;
+  padding: 14px 18px;
+  border-radius: 14px;
   font-size: 15px;
   cursor: pointer;
   text-align: left;
@@ -34,82 +34,95 @@
 }
 
 .admin-nav button:hover {
-  background: #1e293b;
-  transform: translateX(4px);
+  background: linear-gradient(135deg, #1e293b, #020617);
+  transform: translateX(6px);
+  border-color: #facc15;
 }
 
 /* ================= MAIN ================= */
 .admin-main {
   flex: 1;
-  padding: 30px 36px;
+  padding: 36px 44px;
 }
 
 .admin-title {
-  font-size: 26px;
+  font-size: 30px;
   font-weight: 700;
-  margin-bottom: 24px;
+  margin-bottom: 28px;
   color: #facc15;
 }
 
 /* ================= STATS ================= */
 .stats-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-  gap: 20px;
-  margin-bottom: 36px;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 22px;
+  margin-bottom: 44px;
 }
 
 .stat-card {
   background: linear-gradient(145deg, #020617, #020617);
   border: 1px solid #1e293b;
-  padding: 20px;
-  border-radius: 16px;
-  box-shadow: 0 6px 20px rgba(0,0,0,0.6);
+  padding: 26px 20px;
+  border-radius: 18px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.7);
   text-align: center;
+  transition: all 0.25s ease;
+}
+
+.stat-card:hover {
+  transform: translateY(-6px);
+  border-color: #facc15;
 }
 
 .stat-card h3 {
   font-size: 15px;
   font-weight: 500;
   color: #94a3b8;
-  margin-bottom: 8px;
+  margin-bottom: 10px;
 }
 
 .stat-card p {
-  font-size: 30px;
-  font-weight: 700;
-  color: #facc15;
+  font-size: 34px;
+  font-weight: 800;
+  color: #22c55e;
 }
 
 /* ================= SECTIONS ================= */
 .admin-section {
-  margin-bottom: 40px;
+  margin-bottom: 48px;
 }
 
 .admin-section h2 {
-  font-size: 20px;
-  margin-bottom: 16px;
+  font-size: 22px;
+  margin-bottom: 20px;
   color: #e5e7eb;
 }
 
 /* ================= CHARTS ================= */
 .chart-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-  gap: 22px;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 26px;
 }
 
 .chart-card {
-  background: #020617;
+  background: linear-gradient(180deg, #020617, #020617);
   border: 1px solid #1e293b;
-  padding: 18px;
-  border-radius: 16px;
-  box-shadow: 0 6px 24px rgba(0,0,0,0.65);
+  padding: 22px;
+  border-radius: 20px;
+  box-shadow: 0 12px 40px rgba(0,0,0,0.75);
+  transition: all 0.25s ease;
+}
+
+.chart-card:hover {
+  transform: translateY(-4px);
+  border-color: #38bdf8;
 }
 
 .chart-card h3 {
-  font-size: 15px;
-  margin-bottom: 10px;
+  font-size: 16px;
+  margin-bottom: 14px;
   color: #f1f5f9;
   text-align: center;
 }
@@ -117,16 +130,16 @@
 /* ================= ACTIVITY ================= */
 .activity-list {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-  gap: 16px;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 18px;
 }
 
 .activity-item {
-  background: #020617;
+  background: linear-gradient(145deg, #020617, #020617);
   border: 1px solid #1e293b;
   color: #e5e7eb;
-  padding: 14px 16px;
-  border-radius: 12px;
+  padding: 16px 18px;
+  border-radius: 16px;
   cursor: pointer;
   font-size: 15px;
   text-align: left;
@@ -134,9 +147,10 @@
 }
 
 .activity-item:hover {
-  background: #1e293b;
-  transform: translateY(-3px);
-  box-shadow: 0 10px 25px rgba(0,0,0,0.6);
+  background: linear-gradient(135deg, #1e293b, #020617);
+  transform: translateY(-4px);
+  box-shadow: 0 12px 35px rgba(0,0,0,0.7);
+  border-color: #22c55e;
 }
 
 /* ================= LOADING / ERROR ================= */
@@ -162,8 +176,8 @@
 
   .admin-sidebar {
     width: 100%;
-    display: flex;
-    justify-content: center;
+    border-right: none;
+    border-bottom: 1px solid #1e293b;
   }
 
   .admin-nav {

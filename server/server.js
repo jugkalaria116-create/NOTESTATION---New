@@ -357,6 +357,43 @@ app.get("/admin/chart/downloads-per-day", (req, res) => {
     res.json(results);
   });
 });
+// ================= CLIENT CHARTS =================
+
+// Downloads per day (for logged-in client)
+app.get("/client/chart/downloads/:email", (req, res) => {
+  const sql = `
+    SELECT DATE(d.created_at) AS day,
+           COUNT(*) AS totalDownloads
+    FROM note_downloads d
+    JOIN notes n ON n.ID = d.note_id
+    WHERE LOWER(n.Email) = LOWER(?)
+    GROUP BY DATE(d.created_at)
+    ORDER BY day ASC
+  `;
+
+  db.query(sql, [req.params.email], (err, result) => {
+    if (err) return res.status(500).json(err);
+    res.json(result);
+  });
+});
+
+// Likes per day (for logged-in client)
+app.get("/client/chart/likes/:email", (req, res) => {
+  const sql = `
+    SELECT DATE(l.created_at) AS day,
+           COUNT(*) AS totalLikes
+    FROM note_likes l
+    JOIN notes n ON n.ID = l.note_id
+    WHERE LOWER(n.Email) = LOWER(?)
+    GROUP BY DATE(l.created_at)
+    ORDER BY day ASC
+  `;
+
+  db.query(sql, [req.params.email], (err, result) => {
+    if (err) return res.status(500).json(err);
+    res.json(result);
+  });
+});
 
 
 // ================= START SERVER =================

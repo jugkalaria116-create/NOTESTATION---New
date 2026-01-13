@@ -79,7 +79,7 @@ const ViewMessages = () => {
                     className="delete-btn"
                     onClick={() => handleDelete(m.id)}
                   >
-                    ❌ Delete
+                     Delete
                   </button>
                 </td>
               </tr>

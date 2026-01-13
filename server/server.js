@@ -67,7 +67,6 @@ app.post("/register", (req, res) => {
       (err) => {
         if (err) return res.status(500).json(err);
 
-        // 🔔 ACTIVITY LOG
         db.query(
           "INSERT INTO admin_activity (action) VALUES (?)",
           ["👤 New user registered"]
@@ -129,14 +128,13 @@ app.post("/notes", upload.single("upload_file"), (req, res) => {
 
   const sql = `
     INSERT INTO notes
-    (title, description, subject, Email, upload_file, likes_count, downloads_count, avg_rating, created_at)
-    VALUES (?, ?, ?, ?, ?, 0, 0, 0, NOW())
+    (title, description, subject, Email, upload_file, likes_count, downloads_count, avg_rating, visibility, created_at)
+    VALUES (?, ?, ?, ?, ?, 0, 0, 0, 'private', NOW())
   `;
 
   db.query(sql, [title, description, subject, email, fileName], (err) => {
     if (err) return res.status(500).json(err);
 
-    // 🔔 ACTIVITY LOG
     db.query(
       "INSERT INTO admin_activity (action) VALUES (?)",
       ["📄 New note uploaded"]
@@ -150,19 +148,21 @@ app.post("/notes", upload.single("upload_file"), (req, res) => {
 app.get("/notes", (req, res) => {
   const sql = `
     SELECT
-      n.ID AS id,
-      n.title,
-      n.description,
-      n.subject,
-      n.Email,
-      n.upload_file,
-      n.likes_count,
-      n.downloads_count,
-      n.avg_rating,
-      n.created_at,
-      CONCAT('http://localhost:5000/uploads/', n.upload_file) AS url
-    FROM notes n
-    ORDER BY n.created_at DESC
+      ID AS id,
+      title,
+      description,
+      subject,
+      Email,
+      upload_file,
+      visibility,
+      likes_count,
+      downloads_count,
+      avg_rating,
+      created_at,
+      CONCAT('http://localhost:5000/uploads/', upload_file) AS url
+    FROM notes
+    WHERE visibility = 'public'
+    ORDER BY created_at DESC
   `;
 
   db.query(sql, (err, results) => {
@@ -210,7 +210,6 @@ app.post("/notes/:id/download", (req, res) => {
           [noteId]
         );
 
-        // 🔔 ACTIVITY LOG
         db.query(
           "INSERT INTO admin_activity (action) VALUES (?)",
           ["⬇️ Note downloaded"]
@@ -219,6 +218,45 @@ app.post("/notes/:id/download", (req, res) => {
       res.json({ success: true });
     }
   );
+});
+
+// ================= TOGGLE PUBLIC / PRIVATE =================
+app.patch("/notes/toggle-visibility/:id", (req, res) => {
+  const { visibility } = req.body;
+  const noteId = req.params.id;
+
+  db.query(
+    "UPDATE notes SET visibility = ? WHERE ID = ?",
+    [visibility, noteId],
+    (err) => {
+      if (err) return res.status(500).json(err);
+      res.json({ success: true });
+    }
+  );
+});
+
+// ================= MY NOTES (FIXED POSITION) =================
+app.get("/notes/my/:email", (req, res) => {
+  const sql = `
+    SELECT
+      ID AS id,
+      title,
+      description,
+      subject,
+      visibility,
+      likes_count,
+      downloads_count,
+      created_at,
+      CONCAT('http://localhost:5000/uploads/', upload_file) AS url
+    FROM notes
+    WHERE LOWER(Email) = LOWER(?)
+    ORDER BY created_at DESC
+  `;
+
+  db.query(sql, [req.params.email], (err, result) => {
+    if (err) return res.status(500).json(err);
+    res.json(result);
+  });
 });
 
 // ================= USER DASHBOARD STATS =================
@@ -259,147 +297,10 @@ app.get("/user/downloads/:email", (req, res) => {
   });
 });
 
-// ================= ADMIN DASHBOARD =================
-app.get("/admin/dashboard", (req, res) => {
-  const data = {};
-
-  db.query("SELECT COUNT(*) AS count FROM user", (err, u) => {
-    if (err) return res.status(500).json(err);
-    data.users = u[0].count;
-
-    db.query("SELECT COUNT(*) AS count FROM notes", (err, n) => {
-      if (err) return res.status(500).json(err);
-      data.notes = n[0].count;
-
-      db.query("SELECT COUNT(*) AS count FROM note_downloads", (err, d) => {
-        if (err) return res.status(500).json(err);
-        data.downloads = d[0].count;
-
-        db.query("SELECT COUNT(*) AS count FROM contact", (err, m) => {
-          if (err) return res.status(500).json(err);
-          data.messages = m[0].count;
-
-          res.json(data);
-        });
-      });
-    });
-  });
-});
-
-// ================= ADMIN - RECENT ACTIVITY =================
-app.get("/admin/recent-activity", (req, res) => {
-  db.query(
-    "SELECT action, created_at FROM admin_activity ORDER BY id DESC LIMIT 5",
-    (err, results) => {
-      if (err) return res.status(500).json(err);
-      res.json(results);
-    }
-  );
-});
-
-// ================= ADMIN - CONTACT MESSAGES =================
-app.get("/admin/contact-messages", (req, res) => {
-  const sql = `
-    SELECT
-      id,
-      Name AS name,
-      Email AS email,
-      Subject AS subject,
-      contact_messages AS message,
-      Created_at AS date
-    FROM contact
-    ORDER BY id DESC
-  `;
-  db.query(sql, (err, results) => {
-    if (err) return res.status(500).json(err);
-    res.json(results);
-  });
-});
-
-// ================= ADMIN - DELETE CONTACT MESSAGE =================
-app.delete("/admin/contact-messages/:id", (req, res) => {
-  const { id } = req.params;
-
-  db.query("DELETE FROM contact WHERE id = ?", [id], (err, result) => {
-    if (err) return res.status(500).json(err);
-    if (result.affectedRows === 0)
-      return res.status(404).json({ message: "Message not found" });
-
-    res.json({ success: true });
-  });
-});
-// ================= ADMIN - NOTES PER USER =================
-app.get("/admin/chart/notes-per-user", (req, res) => {
-  const sql = `
-    SELECT Email AS user, COUNT(ID) AS totalNotes
-    FROM notes
-    GROUP BY Email
-    ORDER BY totalNotes DESC
-    LIMIT 10
-  `;
-
-  db.query(sql, (err, results) => {
-    if (err) return res.status(500).json(err);
-    res.json(results);
-  });
-});
-// ================= ADMIN - DOWNLOADS PER DAY =================
-app.get("/admin/chart/downloads-per-day", (req, res) => {
-  const sql = `
-    SELECT DATE(created_at) AS day, COUNT(*) AS totalDownloads
-    FROM note_downloads
-    GROUP BY day
-    ORDER BY day
-  `;
-
-  db.query(sql, (err, results) => {
-    if (err) return res.status(500).json(err);
-    res.json(results);
-  });
-});
-// ================= CLIENT CHARTS =================
-
-// Downloads per day (for logged-in client)
-app.get("/client/chart/downloads/:email", (req, res) => {
-  const sql = `
-    SELECT DATE(d.created_at) AS day,
-           COUNT(*) AS totalDownloads
-    FROM note_downloads d
-    JOIN notes n ON n.ID = d.note_id
-    WHERE LOWER(n.Email) = LOWER(?)
-    GROUP BY DATE(d.created_at)
-    ORDER BY day ASC
-  `;
-
-  db.query(sql, [req.params.email], (err, result) => {
-    if (err) return res.status(500).json(err);
-    res.json(result);
-  });
-});
-
-// Likes per day (for logged-in client)
-app.get("/client/chart/likes/:email", (req, res) => {
-  const sql = `
-    SELECT DATE(l.created_at) AS day,
-           COUNT(*) AS totalLikes
-    FROM note_likes l
-    JOIN notes n ON n.ID = l.note_id
-    WHERE LOWER(n.Email) = LOWER(?)
-    GROUP BY DATE(l.created_at)
-    ORDER BY day ASC
-  `;
-
-  db.query(sql, [req.params.email], (err, result) => {
-    if (err) return res.status(500).json(err);
-    res.json(result);
-  });
-});
-// ================= DAILY LIKES (CLIENT DASHBOARD) =================
+// ================= DAILY LIKES =================
 app.get("/user/likes-daily/:email", (req, res) => {
   const sql = `
-    SELECT 
-      DATE(l.created_at) AS day,
-      COUNT(*) AS totalLikes
+    SELECT DATE(l.created_at) AS day, COUNT(*) AS totalLikes
     FROM note_likes l
     JOIN notes n ON n.ID = l.note_id
     WHERE LOWER(n.Email) = LOWER(?)
@@ -410,8 +311,23 @@ app.get("/user/likes-daily/:email", (req, res) => {
 
   db.query(sql, [req.params.email], (err, result) => {
     if (err) return res.status(500).json(err);
-    res.json(result.reverse()); // reverse for chart order
+    res.json(result.reverse());
   });
+});
+app.patch("/notes/toggle-visibility/:id", (req, res) => {
+  console.log("TOGGLE HIT:", req.params.id, req.body.visibility);
+
+  const { visibility } = req.body;
+  const noteId = req.params.id;
+
+  db.query(
+    "UPDATE notes SET visibility = ? WHERE ID = ?",
+    [visibility, noteId],
+    (err) => {
+      if (err) return res.status(500).json(err);
+      res.json({ success: true });
+    }
+  );
 });
 
 

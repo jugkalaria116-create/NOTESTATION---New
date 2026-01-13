@@ -122,6 +122,7 @@ function ClientDashboard() {
 
         <nav>
           <NavLink to="/notes">📚 Browse Notes</NavLink>
+          <NavLink to="/my-notes">🗂 My Notes</NavLink>
           <NavLink to="/upload">📤 Upload</NavLink>
           <NavLink to="/contact">💬 Contact</NavLink>
           <NavLink to="/about">ℹ️ About</NavLink>
@@ -138,7 +139,7 @@ function ClientDashboard() {
         {/* ===== QUICK ACTIONS ===== */}
         <div className="quick-actions">
           <button className="quick-btn primary" onClick={() => navigate("/upload")}>
-            ⬆ Upload Notes
+            📤 Upload Notes
           </button>
 
           <button className="quick-btn" onClick={() => navigate("/notes")}>

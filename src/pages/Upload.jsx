@@ -97,6 +97,15 @@ function Upload() {
             className="upload-input"
             onChange={handleChange}
           />
+          <select
+            name="visibility"
+            className="upload-input"
+            onChange={handleChange}
+          >
+            <option value="private">Private</option>
+            <option value="public">Public</option>
+          </select>
+
 
           <button className="submit-btn">Upload Note</button>
         </form>

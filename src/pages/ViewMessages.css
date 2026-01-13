@@ -66,3 +66,36 @@
   color: #FFD700; /* Golden yellow */
   font-size: 18px;
 }
+/* Action column (Delete button cell) */
+.messages-table td:last-child {
+  text-align: center;
+  vertical-align: middle;
+  width: 120px;
+}
+
+/* Delete button – refined look */
+.delete-btn {
+  background: #ff3b3b;
+  border: none;
+  padding: 6px 16px;
+  border-radius: 4px;
+  color: #ffffff;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+  transition: all 0.2s ease;
+  width: 90px;
+  margin: 6px auto;
+  display: block;
+}
+
+/* Hover effect */
+.delete-btn:hover {
+  background: #d62828;
+  transform: scale(1.05);
+}
+
+/* Click effect */
+.delete-btn:active {
+  transform: scale(0.95);
+}

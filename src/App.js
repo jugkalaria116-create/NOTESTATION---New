@@ -19,6 +19,9 @@ import ManageUsers from "./pages/ManageUsers";
 import ManageNotes from "./pages/ManageNotes";
 import ViewMessages from "./pages/ViewMessages";
 
+/* 🔐 NEW LOGIC ADDED */
+import MyNotes from "./pages/MyNotes";
+
 function App() {
   return (
     <BrowserRouter>
@@ -56,6 +59,16 @@ function App() {
           element={
             <ProtectedRoute role="client">
               <Upload />
+            </ProtectedRoute>
+          }
+        />
+
+        {/* 🔐 NEW LOGIC ADDED */}
+        <Route
+          path="/my-notes"
+          element={
+            <ProtectedRoute role="client">
+              <MyNotes />
             </ProtectedRoute>
           }
         />

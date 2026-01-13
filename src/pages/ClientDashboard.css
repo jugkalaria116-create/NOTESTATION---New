@@ -12,7 +12,7 @@
   width: 260px;
   background: linear-gradient(180deg, #022c22, #020617);
   padding: 28px 22px;
-  box-shadow: 2px 0 16px rgba(0,0,0,0.6);
+  box-shadow: 2px 0 16px rgba(0, 0, 0, 0.6);
 }
 
 .profile {
@@ -32,7 +32,7 @@
   align-items: center;
   justify-content: center;
   margin: 0 auto 12px;
-  box-shadow: 0 10px 30px rgba(34,197,94,0.35);
+  box-shadow: 0 10px 30px rgba(34, 197, 94, 0.35);
 }
 
 .profile-name {
@@ -108,7 +108,7 @@
   border: none;
   color: #022c22;
   font-weight: 700;
-  box-shadow: 0 8px 25px rgba(34,197,94,0.4);
+  box-shadow: 0 8px 25px rgba(34, 197, 94, 0.4);
 }
 
 /* ================= STATS ================= */
@@ -126,7 +126,7 @@
   border-radius: 18px;
   text-align: center;
   font-size: 15px;
-  box-shadow: 0 10px 30px rgba(0,0,0,0.55);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.55);
 }
 
 .stat-card span {
@@ -137,40 +137,37 @@
   margin-top: 8px;
 }
 
-/* ================= CHARTS ================= */
+/* ================= ACTIVITY OVERVIEW ================= */
 .charts {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-  gap: 28px;
+  display: flex;
+  justify-content: center;
+  margin-top: 10px;
 }
 
 .chart-card {
   background: #020617;
   border: 1px solid #1e293b;
-  padding: 22px 20px;
+  padding: 26px 20px;
   border-radius: 18px;
-  box-shadow: 0 10px 28px rgba(0,0,0,0.6);
+  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.6);
+  width: 100%;
+  max-width: 420px;
 }
 
 .chart-card h3 {
   text-align: center;
-  margin-bottom: 14px;
-  font-size: 15px;
+  margin-bottom: 18px;
+  font-size: 16px;
   font-weight: 600;
   color: #f1f5f9;
 }
 
-/* fixes bar/line chart stretching */
+/* Doughnut size control */
 .chart-card canvas {
+  max-width: 280px !important;
   max-height: 280px !important;
-}
-
-/* ================= EMPTY / PLACEHOLDER ================= */
-.chart-placeholder {
-  text-align: center;
-  color: #94a3b8;
-  font-size: 14px;
-  padding: 48px 0;
+  margin: 0 auto;
+  display: block;
 }
 
 /* ================= RESPONSIVE ================= */
@@ -193,15 +190,8 @@
   .client-sidebar a {
     transform: none;
   }
-}
-.chart-card {
-  position: relative;
-  height: 320px;          /* ✅ fixed card height */
-  overflow: hidden;       /* ✅ prevents overflow */
-}
 
-/* Chart canvas fix */
-.chart-card canvas {
-  max-width: 100% !important;
-  max-height: 100% !important;
+  .client-main {
+    padding: 28px 22px;
+  }
 }

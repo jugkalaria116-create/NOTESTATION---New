@@ -124,3 +124,32 @@
     font-size: 26px;
   }
 }
+/* ===== VISIBILITY DROPDOWN ONLY ===== */
+.visibility-filter {
+  background-color: #020617;
+  border: 1px solid #1e293b;
+  color: #e5e7eb;
+  padding: 10px 16px;
+  border-radius: 12px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: border-color 0.25s ease, box-shadow 0.25s ease;
+}
+
+/* Hover */
+.visibility-filter:hover {
+  border-color: #22c55e;
+}
+
+/* Focus */
+.visibility-filter:focus {
+  outline: none;
+  border-color: #22c55e;
+  box-shadow: 0 0 0 2px rgba(34, 197, 94, 0.25);
+}
+
+/* Options (limited support across browsers) */
+.visibility-filter option {
+  background-color: #020617;
+  color: #e5e7eb;
+}

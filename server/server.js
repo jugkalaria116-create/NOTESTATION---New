@@ -329,7 +329,130 @@ app.patch("/notes/toggle-visibility/:id", (req, res) => {
     }
   );
 });
+// ================= ADMIN DASHBOARD STATS =================
+app.get("/admin/dashboard", (req, res) => {
+  const stats = {};
 
+  // 1️⃣ Total users
+  db.query("SELECT COUNT(*) AS users FROM user", (err, r1) => {
+    if (err) return res.status(500).json(err);
+    stats.users = r1[0].users;
+
+    // 2️⃣ Total notes
+    db.query("SELECT COUNT(*) AS notes FROM notes", (err, r2) => {
+      if (err) return res.status(500).json(err);
+      stats.notes = r2[0].notes;
+
+      // 3️⃣ Total downloads
+      db.query(
+        "SELECT IFNULL(SUM(downloads_count), 0) AS downloads FROM notes",
+        (err, r3) => {
+          if (err) return res.status(500).json(err);
+          stats.downloads = r3[0].downloads;
+
+          // 4️⃣ Total messages (FIXED TABLE NAME)
+          db.query(
+            "SELECT COUNT(*) AS messages FROM contact",
+            (err, r4) => {
+              if (err) return res.status(500).json(err);
+              stats.messages = r4[0].messages;
+
+              // ✅ Final response
+              res.json(stats);
+            }
+          );
+        }
+      );
+    });
+  });
+});
+// ================= ADMIN CHART: NOTES PER USER =================
+app.get("/admin/chart/notes-per-user", (req, res) => {
+  const sql = `
+    SELECT 
+      CONCAT(u.fname, ' ', u.lname) AS user,
+      COUNT(n.ID) AS totalNotes
+    FROM user u
+    LEFT JOIN notes n ON LOWER(u.email) = LOWER(n.Email)
+    GROUP BY u.email
+    ORDER BY totalNotes DESC
+  `;
+
+  db.query(sql, (err, result) => {
+    if (err) return res.status(500).json(err);
+    res.json(result);
+  });
+});
+// ================= ADMIN CHART: DOWNLOADS PER DAY =================
+app.get("/admin/chart/downloads-per-day", (req, res) => {
+  const sql = `
+    SELECT 
+      DATE(created_at) AS day,
+      COUNT(*) AS totalDownloads
+    FROM note_downloads
+    GROUP BY DATE(created_at)
+    ORDER BY day ASC
+    LIMIT 14
+  `;
+
+  db.query(sql, (err, result) => {
+    if (err) return res.status(500).json(err);
+    res.json(result);
+  });
+});
+// ================= CONTACT FORM =================
+app.post("/contact", (req, res) => {
+  console.log("CONTACT BODY:", req.body); // 🔍 debug
+
+  const { name, email, subject, message } = req.body;
+
+  if (!name || !email || !subject || !message) {
+    return res.status(400).json({ error: "All fields are required" });
+  }
+
+  const sql = `
+    INSERT INTO \`contact\`
+    (\`Name\`, \`Email\`, \`Subject\`, \`contact_messages\`)
+    VALUES (?, ?, ?, ?)
+  `;
+
+  db.query(sql, [name, email, subject, message], (err, result) => {
+    if (err) {
+      console.error("❌ CONTACT INSERT ERROR:", err.sqlMessage || err);
+      return res.status(500).json({
+        error: "Database insert failed",
+        details: err.sqlMessage
+      });
+    }
+
+    res.json({
+      success: true,
+      message: "Message sent successfully"
+    });
+  });
+});
+// ================= ADMIN: VIEW CONTACT MESSAGES =================
+app.get("/admin/contact-messages", (req, res) => {
+  const sql = `
+    SELECT 
+      id,
+      Name AS name,
+      Email AS email,
+      Subject AS subject,
+      contact_messages AS message,
+      Created_at AS date
+    FROM contact
+    ORDER BY Created_at DESC
+  `;
+
+  db.query(sql, (err, results) => {
+    if (err) {
+      console.error("❌ FETCH CONTACT ERROR:", err);
+      return res.status(500).json(err);
+    }
+    res.json(results);
+  });
+});
 
 // ================= START SERVER =================
 const PORT = 5000;

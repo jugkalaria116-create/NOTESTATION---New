@@ -259,6 +259,46 @@ app.get("/notes/my/:email", (req, res) => {
     res.json(result);
   });
 });
+// ================= DELETE NOTE (OWNER ONLY) =================
+app.delete("/notes/:id", (req, res) => {
+  const noteId = req.params.id;
+  const { email } = req.body;
+
+  if (!email) {
+    return res.status(400).json({ error: "Email is required" });
+  }
+
+  db.query(
+    "SELECT upload_file, Email FROM notes WHERE ID = ?",
+    [noteId],
+    (err, result) => {
+      if (err) return res.status(500).json(err);
+
+      if (result.length === 0) {
+        return res.status(404).json({ error: "Note not found" });
+      }
+
+      const note = result[0];
+
+      if (note.Email.toLowerCase() !== email.toLowerCase()) {
+        return res.status(403).json({
+          error: "You are not allowed to delete this note",
+        });
+      }
+
+      const filePath = path.join(__dirname, "uploads", note.upload_file);
+      if (fs.existsSync(filePath)) {
+        fs.unlinkSync(filePath);
+      }
+
+      db.query("DELETE FROM notes WHERE ID = ?", [noteId], (err) => {
+        if (err) return res.status(500).json(err);
+
+        res.json({ success: true });
+      });
+    }
+  );
+});
 
 
 // ================= USER DASHBOARD STATS =================

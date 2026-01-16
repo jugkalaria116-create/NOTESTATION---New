@@ -1,7 +1,5 @@
 import React, { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
-// import Navbar from "../components/Navbar";
-// import Footer from "../components/Footer";
 import "./Login.css";
 
 function Logins() {
@@ -39,12 +37,15 @@ function Logins() {
         return;
       }
 
-      sessionStorage.clear();
+      // ✅ DO NOT CLEAR STORAGE HERE
+      // sessionStorage.clear(); ❌ REMOVE THIS
+
+      // ✅ STORE USER INFO
       sessionStorage.setItem("role", "client");
       sessionStorage.setItem("email", data.email);
       sessionStorage.setItem("name", data.name);
-      sessionStorage.setItem("userId", data.userId);
 
+      // ✅ KEEP YOUR DASHBOARD ROUTE
       navigate("/client-dashboard");
     } catch {
       setError("Server not responding");
@@ -53,9 +54,6 @@ function Logins() {
 
   return (
     <div className="page-container">
-      {/* <Navbar /> */}
-
-      {/* SAME STRUCTURE AS REGISTER */}
       <div className="login-page-container">
         <h2>Login</h2>
 
@@ -80,15 +78,12 @@ function Logins() {
 
           <button type="submit">Login</button>
 
-          {/* SAME AS REGISTER */}
           <p className="register-link">
             Not registered?{" "}
             <Link to="/registers">Create an account</Link>
           </p>
         </form>
       </div>
-
-      {/* <Footer /> */}
     </div>
   );
 }

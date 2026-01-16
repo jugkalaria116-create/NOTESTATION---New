@@ -7,60 +7,63 @@ function MyNotes() {
 
   const email = sessionStorage.getItem("email");
 
-  // ================= FETCH MY NOTES =================
   const fetchMyNotes = useCallback(async () => {
     if (!email) return;
 
-    try {
-      const res = await fetch(`http://localhost:5000/notes/my/${email}`);
-      const data = await res.json();
-      setNotes(Array.isArray(data) ? data : []);
-    } catch (err) {
-      console.error("Fetch my notes error:", err);
-    }
+    const res = await fetch(`http://localhost:5000/notes/my/${email}`);
+    const data = await res.json();
+    setNotes(Array.isArray(data) ? data : []);
   }, [email]);
 
   useEffect(() => {
     fetchMyNotes();
   }, [fetchMyNotes]);
 
-  // ================= TOGGLE VISIBILITY =================
   const toggleVisibility = async (note) => {
     const newVisibility =
       note.visibility === "public" ? "private" : "public";
 
-    try {
-      await fetch(
-        `http://localhost:5000/notes/toggle-visibility/${note.id}`,
-        {
-          method: "PATCH",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ visibility: newVisibility }),
-        }
-      );
+    await fetch(`http://localhost:5000/notes/toggle-visibility/${note.id}`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ visibility: newVisibility }),
+    });
 
-      fetchMyNotes();
-    } catch (err) {
-      console.error("Toggle visibility error:", err);
-    }
+    fetchMyNotes();
   };
 
-  // ================= FILTER NOTES =================
+  const deleteNote = async (noteId) => {
+    if (!window.confirm("Delete this note permanently?")) return;
+
+    const res = await fetch(`http://localhost:5000/notes/${noteId}`, {
+      method: "DELETE",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email }),
+    });
+
+    const data = await res.json();
+    if (!res.ok) {
+      alert(data.error || "Delete failed");
+      return;
+    }
+
+    fetchMyNotes();
+  };
+
   const filteredNotes =
     filter === "all"
       ? notes
-      : notes.filter((note) => note.visibility === filter);
+      : notes.filter((n) => n.visibility === filter);
 
   return (
     <div className="page-container">
       <h1>My Notes</h1>
 
-      {/* ===== VISIBILITY FILTER ===== */}
       <div className="filter-bar">
         <select
+          className="visibility-filter"
           value={filter}
           onChange={(e) => setFilter(e.target.value)}
-          className="visibility-filter"
         >
           <option value="all">All Notes</option>
           <option value="public">🌍 Public</option>
@@ -68,28 +71,17 @@ function MyNotes() {
         </select>
       </div>
 
-      {/* ===== NOTES GRID ===== */}
       <div className="card-grid">
-        {filteredNotes.length === 0 && (
-          <p style={{ color: "#94a3b8" }}>No notes found.</p>
-        )}
-
         {filteredNotes.map((note) => (
           <div className="note-card" key={note.id}>
             <h3>{note.title}</h3>
             <p>{note.description}</p>
 
-            <p>
-              <b>Subject:</b> {note.subject}
-            </p>
-
-            <p>
-              <b>Visibility:</b>{" "}
-              {note.visibility === "public" ? "🌍 Public" : "🔒 Private"}
-            </p>
+            <p><b>Subject:</b> {note.subject}</p>
+            <p><b>Visibility:</b> {note.visibility}</p>
 
             <div className="note-stats">
-              ❤️ {note.likes_count} &nbsp; ⬇️ {note.downloads_count}
+              ❤️ {note.likes_count} ⬇️ {note.downloads_count}
             </div>
 
             <div className="note-actions">
@@ -101,6 +93,14 @@ function MyNotes() {
                 {note.visibility === "public"
                   ? "🔒 Make Private"
                   : "🌍 Make Public"}
+              </button>
+
+              {/* 🗑 ALWAYS VISIBLE ON MY NOTES */}
+              <button
+                className="delete-btn"
+                onClick={() => deleteNote(note.id)}
+              >
+                🗑 Delete
               </button>
             </div>
           </div>

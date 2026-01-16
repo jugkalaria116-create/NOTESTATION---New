@@ -153,3 +153,30 @@
   background-color: #020617;
   color: #e5e7eb;
 }
+.note-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.note-actions button {
+  min-width: 120px;
+}
+/* ================= DELETE BUTTON ================= */
+.delete-btn {
+  background: linear-gradient(135deg, #ef4444, #dc2626);
+  border: 1px solid #b91c1c;
+  color: #fff;
+  font-weight: 600;
+  box-shadow: 0 6px 16px rgba(239, 68, 68, 0.35);
+}
+
+.delete-btn:hover {
+  background: linear-gradient(135deg, #dc2626, #b91c1c);
+  transform: translateY(-2px) scale(1.03);
+  box-shadow: 0 10px 25px rgba(239, 68, 68, 0.55);
+}
+
+.delete-btn:active {
+  transform: translateY(0) scale(0.98);
+}

@@ -1,3 +1,7 @@
+/* =====================================================
+   MY NOTES – PROFESSIONAL STYLESHEET
+   ===================================================== */
+
 /* ================= PAGE LAYOUT ================= */
 .page-container {
   min-height: 100vh;
@@ -15,7 +19,40 @@
   margin-bottom: 40px;
 }
 
-/* ================= NOTES GRID ================= */
+/* ================= FILTER ================= */
+.filter-bar {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 30px;
+}
+
+.visibility-filter {
+  background-color: #020617;
+  border: 1px solid #1e293b;
+  color: #e5e7eb;
+  padding: 10px 16px;
+  border-radius: 12px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: border-color 0.25s ease, box-shadow 0.25s ease;
+}
+
+.visibility-filter:hover {
+  border-color: #22c55e;
+}
+
+.visibility-filter:focus {
+  outline: none;
+  border-color: #22c55e;
+  box-shadow: 0 0 0 2px rgba(34, 197, 94, 0.25);
+}
+
+.visibility-filter option {
+  background-color: #020617;
+  color: #e5e7eb;
+}
+
+/* ================= GRID ================= */
 .card-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
@@ -24,39 +61,38 @@
 
 /* ================= NOTE CARD ================= */
 .note-card {
-  background: linear-gradient(145deg, #020617, #020617);
+  background: #020617;
   border: 1px solid #1e293b;
   border-radius: 18px;
   padding: 22px;
-  box-shadow: 0 10px 28px rgba(0,0,0,0.6);
-  transition: all 0.25s ease;
+  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.6);
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
 }
 
 .note-card:hover {
   transform: translateY(-4px);
-  box-shadow: 0 16px 36px rgba(0,0,0,0.75);
+  box-shadow: 0 16px 36px rgba(0, 0, 0, 0.75);
 }
 
 /* ================= CONTENT ================= */
 .note-card h3 {
   font-size: 18px;
   font-weight: 700;
-  color: #e5e7eb;
   margin-bottom: 8px;
 }
 
 .note-card p {
   font-size: 14px;
   color: #cbd5f5;
-  margin-bottom: 8px;
+  margin-bottom: 6px;
 }
 
 .note-card b {
   color: #f1f5f9;
 }
 
-/* ================= VISIBILITY BADGE ================= */
-.note-card .visibility {
+/* ================= VISIBILITY ================= */
+.visibility {
   display: inline-block;
   padding: 6px 12px;
   font-size: 12px;
@@ -65,13 +101,13 @@
   margin-top: 6px;
 }
 
-.note-card .public {
-  background: rgba(34,197,94,0.15);
+.visibility.public {
+  background: rgba(34, 197, 94, 0.15);
   color: #22c55e;
 }
 
-.note-card .private {
-  background: rgba(250,204,21,0.15);
+.visibility.private {
+  background: rgba(250, 204, 21, 0.15);
   color: #facc15;
 }
 
@@ -85,20 +121,21 @@
 /* ================= ACTIONS ================= */
 .note-actions {
   display: flex;
-  gap: 10px;
   flex-wrap: wrap;
-  margin-top: 12px;
+  gap: 10px;
+  margin-top: 14px;
 }
 
 .note-actions button {
-  background: #020617;
-  border: 1px solid #1e293b;
-  color: #e5e7eb;
+  min-width: 120px;
   padding: 8px 14px;
-  border-radius: 999px;
-  cursor: pointer;
   font-size: 13px;
-  transition: all 0.25s ease;
+  border-radius: 999px;
+  border: 1px solid #1e293b;
+  background: #020617;
+  color: #e5e7eb;
+  cursor: pointer;
+  transition: background 0.25s ease, transform 0.2s ease;
 }
 
 .note-actions button:hover {
@@ -106,12 +143,103 @@
   transform: translateY(-2px);
 }
 
+/* ================= DELETE BUTTON ================= */
+.delete-btn {
+  background: linear-gradient(135deg, #ef4444, #dc2626);
+  border: 1px solid #b91c1c;
+  color: #ffffff;
+  font-weight: 600;
+  box-shadow: 0 6px 16px rgba(239, 68, 68, 0.35);
+}
+
+.delete-btn:hover {
+  background: linear-gradient(135deg, #dc2626, #b91c1c);
+  box-shadow: 0 10px 25px rgba(239, 68, 68, 0.55);
+}
+
+.delete-btn:active {
+  transform: scale(0.98);
+}
+
 /* ================= EMPTY STATE ================= */
-.empty-state {
+.empty-state,
+.card-grid > p {
+  grid-column: 1 / -1;
   text-align: center;
-  margin-top: 80px;
   color: #94a3b8;
   font-size: 16px;
+  margin-top: 60px;
+}
+
+/* ================= UNDO BAR ================= */
+.undo-bar {
+  position: fixed;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #020617;
+  border: 1px solid #1e293b;
+  color: #e5e7eb;
+  padding: 14px 18px;
+  border-radius: 14px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  min-width: 260px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
+  animation: slideUp 0.3s ease;
+  z-index: 1000;
+}
+
+/* Progress bar */
+.undo-timer {
+  flex: 1;
+  height: 6px;
+  background: #1e293b;
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.undo-progress {
+  height: 100%;
+  background: linear-gradient(90deg, #22c55e, #16a34a);
+  animation: undoCountdown 5s linear forwards;
+}
+
+/* Undo button */
+.undo-bar button {
+  background: #22c55e;
+  color: #020617;
+  border: none;
+  padding: 6px 14px;
+  border-radius: 999px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.undo-bar button:hover {
+  background: #16a34a;
+}
+
+/* ================= ANIMATIONS ================= */
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translate(-50%, 16px);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, 0);
+  }
+}
+
+@keyframes undoCountdown {
+  from {
+    width: 100%;
+  }
+  to {
+    width: 0%;
+  }
 }
 
 /* ================= RESPONSIVE ================= */
@@ -123,60 +251,12 @@
   .page-container h1 {
     font-size: 26px;
   }
-}
-/* ===== VISIBILITY DROPDOWN ONLY ===== */
-.visibility-filter {
-  background-color: #020617;
-  border: 1px solid #1e293b;
-  color: #e5e7eb;
-  padding: 10px 16px;
-  border-radius: 12px;
-  font-size: 14px;
-  cursor: pointer;
-  transition: border-color 0.25s ease, box-shadow 0.25s ease;
-}
 
-/* Hover */
-.visibility-filter:hover {
-  border-color: #22c55e;
-}
+  .note-actions {
+    flex-direction: column;
+  }
 
-/* Focus */
-.visibility-filter:focus {
-  outline: none;
-  border-color: #22c55e;
-  box-shadow: 0 0 0 2px rgba(34, 197, 94, 0.25);
-}
-
-/* Options (limited support across browsers) */
-.visibility-filter option {
-  background-color: #020617;
-  color: #e5e7eb;
-}
-.note-actions {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-}
-
-.note-actions button {
-  min-width: 120px;
-}
-/* ================= DELETE BUTTON ================= */
-.delete-btn {
-  background: linear-gradient(135deg, #ef4444, #dc2626);
-  border: 1px solid #b91c1c;
-  color: #fff;
-  font-weight: 600;
-  box-shadow: 0 6px 16px rgba(239, 68, 68, 0.35);
-}
-
-.delete-btn:hover {
-  background: linear-gradient(135deg, #dc2626, #b91c1c);
-  transform: translateY(-2px) scale(1.03);
-  box-shadow: 0 10px 25px rgba(239, 68, 68, 0.55);
-}
-
-.delete-btn:active {
-  transform: translateY(0) scale(0.98);
+  .note-actions button {
+    width: 100%;
+  }
 }

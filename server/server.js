@@ -161,7 +161,7 @@ app.get("/notes", (req, res) => {
       created_at,
       CONCAT('http://localhost:5000/uploads/', upload_file) AS url
     FROM notes
-    WHERE visibility = 'public'
+    WHERE visibility = 'public'AND deleted_at IS NULL
     ORDER BY created_at DESC
   `;
 
@@ -318,7 +318,7 @@ app.get("/user/likes/:email", (req, res) => {
     SELECT COUNT(l.id) AS totalLikes
     FROM note_likes l
     JOIN notes n ON n.ID = l.note_id
-    WHERE LOWER(n.Email) = LOWER(?)
+    WHERE LOWER(n.Email) = LOWER(?) AND deleted_at IS NULL
   `;
   db.query(sql, [req.params.email], (err, result) => {
     if (err) return res.status(500).json(err);
@@ -570,6 +570,80 @@ app.delete("/notes/:id", (req, res) => {
           res.json({ success: true });
         }
       );
+    }
+  );
+});
+// ================= MOVE NOTE TO TRASH =================
+app.patch("/notes/trash/:id", (req, res) => {
+  const noteId = req.params.id;
+  const { email } = req.body;
+
+  db.query(
+    `UPDATE notes
+     SET deleted_at = NOW()
+     WHERE ID = ? AND LOWER(Email) = LOWER(?)`,
+    [noteId, email],
+    (err, result) => {
+      if (err) return res.status(500).json(err);
+      if (result.affectedRows === 0) {
+        return res.status(403).json({ error: "Not allowed" });
+      }
+      res.json({ success: true });
+    }
+  );
+});
+// ================= FETCH TRASH =================
+app.get("/notes/trash/:email", (req, res) => {
+  db.query(
+    `SELECT
+      ID AS id,
+      title,
+      description,
+      deleted_at
+     FROM notes
+     WHERE LOWER(Email) = LOWER(?)
+       AND deleted_at IS NOT NULL
+     ORDER BY deleted_at DESC`,
+    [req.params.email],
+    (err, result) => {
+      if (err) return res.status(500).json(err);
+      res.json(result);
+    }
+  );
+});
+// ================= RESTORE NOTE =================
+app.patch("/notes/restore/:id", (req, res) => {
+  const noteId = req.params.id;
+  const { email } = req.body;
+
+  db.query(
+    `UPDATE notes
+     SET deleted_at = NULL
+     WHERE ID = ? AND LOWER(Email) = LOWER(?)`,
+    [noteId, email],
+    (err, result) => {
+      if (err) return res.status(500).json(err);
+      if (result.affectedRows === 0) {
+        return res.status(403).json({ error: "Not allowed" });
+      }
+      res.json({ success: true });
+    }
+  );
+});
+// ================= DELETE NOTE PERMANENTLY =================
+app.delete("/notes/permanent/:id", (req, res) => {
+  const noteId = req.params.id;
+  const { email } = req.body;
+
+  db.query(
+    "DELETE FROM notes WHERE ID = ? AND LOWER(Email) = LOWER(?)",
+    [noteId, email],
+    (err, result) => {
+      if (err) return res.status(500).json(err);
+      if (result.affectedRows === 0) {
+        return res.status(403).json({ error: "Not allowed" });
+      }
+      res.json({ success: true });
     }
   );
 });

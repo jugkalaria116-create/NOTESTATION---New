@@ -1,12 +1,17 @@
-import React, { useEffect, useState, useCallback } from "react";
+import React, { useEffect, useState, useCallback, useRef } from "react";
 import "./MyNotes.css";
 
 function MyNotes() {
   const [notes, setNotes] = useState([]);
   const [filter, setFilter] = useState("all");
 
+  // 🧠 Undo state
+  const [pendingDelete, setPendingDelete] = useState(null);
+  const deleteTimerRef = useRef(null);
+
   const email = sessionStorage.getItem("email");
 
+  // ================= FETCH MY NOTES =================
   const fetchMyNotes = useCallback(async () => {
     if (!email) return;
 
@@ -19,6 +24,7 @@ function MyNotes() {
     fetchMyNotes();
   }, [fetchMyNotes]);
 
+  // ================= TOGGLE VISIBILITY =================
   const toggleVisibility = async (note) => {
     const newVisibility =
       note.visibility === "public" ? "private" : "public";
@@ -32,22 +38,33 @@ function MyNotes() {
     fetchMyNotes();
   };
 
-  const deleteNote = async (noteId) => {
-    if (!window.confirm("Delete this note permanently?")) return;
+  // ================= DELETE WITH UNDO =================
+  const deleteNote = (note) => {
+    // 1️⃣ Remove from UI immediately
+    setNotes((prev) => prev.filter((n) => n.id !== note.id));
 
-    const res = await fetch(`http://localhost:5000/notes/${noteId}`, {
-      method: "DELETE",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email }),
-    });
+    // 2️⃣ Store pending delete
+    setPendingDelete(note);
 
-    const data = await res.json();
-    if (!res.ok) {
-      alert(data.error || "Delete failed");
-      return;
-    }
+    // 3️⃣ Start 5-second timer
+    deleteTimerRef.current = setTimeout(async () => {
+      await fetch(`http://localhost:5000/notes/${note.id}`, {
+        method: "DELETE",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email }),
+      });
 
-    fetchMyNotes();
+      setPendingDelete(null);
+    }, 5000);
+  };
+
+  // ================= UNDO DELETE =================
+  const undoDelete = () => {
+    clearTimeout(deleteTimerRef.current);
+
+    // Restore note
+    setNotes((prev) => [pendingDelete, ...prev]);
+    setPendingDelete(null);
   };
 
   const filteredNotes =
@@ -59,6 +76,7 @@ function MyNotes() {
     <div className="page-container">
       <h1>My Notes</h1>
 
+      {/* ===== FILTER ===== */}
       <div className="filter-bar">
         <select
           className="visibility-filter"
@@ -71,6 +89,7 @@ function MyNotes() {
         </select>
       </div>
 
+      {/* ===== NOTES GRID ===== */}
       <div className="card-grid">
         {filteredNotes.map((note) => (
           <div className="note-card" key={note.id}>
@@ -95,17 +114,32 @@ function MyNotes() {
                   : "🌍 Make Public"}
               </button>
 
-              {/* 🗑 ALWAYS VISIBLE ON MY NOTES */}
               <button
                 className="delete-btn"
-                onClick={() => deleteNote(note.id)}
+                onClick={() => deleteNote(note)}
               >
-                🗑 Delete
+                🗑 Move to Trash
               </button>
+
             </div>
           </div>
         ))}
       </div>
+
+      {/* ===== UNDO BAR ===== */}
+      {pendingDelete && (
+        <div className="undo-bar">
+          <span>Note deleted</span>
+
+          {/* ⏳ Countdown bar */}
+          <div className="undo-timer">
+            <div className="undo-progress" />
+          </div>
+
+          <button onClick={undoDelete}>UNDO</button>
+        </div>
+      )}
+
     </div>
   );
 }

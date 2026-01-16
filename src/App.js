@@ -5,22 +5,25 @@ import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
 import ProtectedRoute from "./components/ProtectedRoute";
 
-/* Pages */
+/* PUBLIC PAGES */
 import Home from "./pages/Home";
 import Logins from "./pages/Logins";
 import Registers from "./pages/Registers";
 import About from "./pages/About";
 import Contact from "./pages/Contact";
+
+/* CLIENT PAGES */
 import Notes from "./pages/Notes";
 import Upload from "./pages/Upload";
 import ClientDashboard from "./pages/ClientDashboard";
+import MyNotes from "./pages/MyNotes";
+import TrashBin from "./pages/TrashBin";
+
+/* ADMIN PAGES */
 import AdminDashboard from "./pages/AdminDashboard";
 import ManageUsers from "./pages/ManageUsers";
 import ManageNotes from "./pages/ManageNotes";
 import ViewMessages from "./pages/ViewMessages";
-
-/* 🔐 NEW LOGIC ADDED */
-import MyNotes from "./pages/MyNotes";
 
 function App() {
   return (
@@ -28,14 +31,14 @@ function App() {
       <Navbar />
 
       <Routes>
-        {/* PUBLIC */}
+        {/* ================= PUBLIC ================= */}
         <Route path="/" element={<Home />} />
         <Route path="/login" element={<Logins />} />
         <Route path="/registers" element={<Registers />} />
         <Route path="/about" element={<About />} />
         <Route path="/contact" element={<Contact />} />
 
-        {/* CLIENT */}
+        {/* ================= CLIENT ================= */}
         <Route
           path="/client-dashboard"
           element={
@@ -63,7 +66,6 @@ function App() {
           }
         />
 
-        {/* 🔐 NEW LOGIC ADDED */}
         <Route
           path="/my-notes"
           element={
@@ -73,7 +75,17 @@ function App() {
           }
         />
 
-        {/* ADMIN */}
+        {/* 🗑 TRASH BIN */}
+        <Route
+          path="/trash"
+          element={
+            <ProtectedRoute role="client">
+              <TrashBin />
+            </ProtectedRoute>
+          }
+        />
+
+        {/* ================= ADMIN ================= */}
         <Route
           path="/admin"
           element={
@@ -110,6 +122,7 @@ function App() {
           }
         />
 
+        {/* ================= 404 ================= */}
         <Route path="*" element={<h2>404 – Page Not Found</h2>} />
       </Routes>
 

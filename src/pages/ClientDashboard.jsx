@@ -92,6 +92,7 @@ function ClientDashboard() {
         <nav>
           <NavLink to="/notes">📚 Browse Notes</NavLink>
           <NavLink to="/my-notes">📁My Notes</NavLink>
+          <NavLink to="/trash" className="trash-link">  🗑️Trash Bin</NavLink>
           <NavLink to="/upload">📤 Upload</NavLink>
           <NavLink to="/contact">💬 Contact</NavLink>
           <NavLink to="/about">ℹ️ About</NavLink>

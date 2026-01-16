@@ -48,11 +48,12 @@ function MyNotes() {
 
     // 3️⃣ Start 5-second timer
     deleteTimerRef.current = setTimeout(async () => {
-      await fetch(`http://localhost:5000/notes/${note.id}`, {
-        method: "DELETE",
+      await fetch(`http://localhost:5000/notes/trash/${note.id}`, {
+        method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email }),
       });
+
 
       setPendingDelete(null);
     }, 5000);

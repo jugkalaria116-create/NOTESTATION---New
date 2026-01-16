@@ -226,3 +226,12 @@
   margin-top: 6px;
   color: #22c55e;
 }
+/* Trash link styling */
+.trash-link {
+  color: #ffffff !important;
+}
+
+.trash-link.active {
+  background: rgba(239, 68, 68, 0.15);
+  border-left: 3px solid #ef4444;
+}

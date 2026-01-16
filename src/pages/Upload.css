@@ -1,62 +1,109 @@
+/* ================= PAGE BACKGROUND ================= */
 .upload-page-container {
   min-height: 100vh;
-  background:
-    linear-gradient(rgba(0,0,0,.7), rgba(0,0,0,.7)),
-    url("https://images.unsplash.com/photo-1515165562835-c4c1b5722f6b");
-  background-size: cover;
-  color: #fff;
-}
-
-.upload-content-wrap {
+  background: radial-gradient(circle at top, #020617, #020617);
+  color: #e5e7eb;
+  font-family: "Segoe UI", system-ui, sans-serif;
   display: flex;
   justify-content: center;
   align-items: center;
-  padding: 40px;
 }
 
+/* ================= CENTER WRAPPER ================= */
+.upload-content-wrap {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  padding: 40px 20px;
+}
+
+/* ================= UPLOAD CARD ================= */
 .upload-container {
   width: 420px;
-  background: rgba(0,0,0,.75);
-  padding: 35px;
-  border-radius: 20px;
+  background: linear-gradient(
+    180deg,
+    rgba(2, 6, 23, 0.9),
+    rgba(2, 6, 23, 0.75)
+  );
+  border-radius: 22px;
+  padding: 36px;
   display: flex;
   flex-direction: column;
-  gap: 14px;
-  /* backdrop-filter: blur(10px); */
+  gap: 16px;
+
+  border: 1px solid rgba(255, 215, 0, 0.15);
+  box-shadow:
+    0 0 0 1px rgba(255, 215, 0, 0.05),
+    0 20px 40px rgba(0, 0, 0, 0.6);
 }
 
+/* ================= TITLE ================= */
 .upload-title {
   text-align: center;
-  color: #f6d780;
-  margin-bottom: 10px;
+  font-size: 26px;
+  font-weight: 700;
+  color: #facc15;
+  margin-bottom: 8px;
 }
 
+/* ================= INPUTS ================= */
 .upload-input,
 .upload-textarea,
 .upload-file {
-  padding: 12px;
-  border-radius: 10px;
-  border: none;
-  background: #222;
-  color: #fff;
+  width: 100%;
+  padding: 13px 14px;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 215, 0, 0.12);
+  background: rgba(15, 23, 42, 0.9);
+  color: #e5e7eb;
+  font-size: 14px;
+  outline: none;
+  transition: 0.25s ease;
 }
 
+.upload-input::placeholder,
+.upload-textarea::placeholder {
+  color: #9ca3af;
+}
+
+.upload-input:focus,
+.upload-textarea:focus,
+.upload-file:focus {
+  border-color: #facc15;
+  box-shadow: 0 0 0 2px rgba(250, 204, 21, 0.25);
+}
+
+/* ================= TEXTAREA ================= */
 .upload-textarea {
   resize: none;
-  height: 80px;
+  height: 90px;
 }
 
-.submit-btn {
-  background: #f6d780;
-  color: #333;
-  padding: 14px;
-  border-radius: 30px;
-  border: none;
-  font-weight: bold;
+/* ================= FILE INPUT ================= */
+.upload-file {
+  padding: 10px;
   cursor: pointer;
-  transition: .3s;
+}
+
+/* ================= SUBMIT BUTTON ================= */
+.submit-btn {
+  margin-top: 10px;
+  background: linear-gradient(135deg, #facc15, #eab308);
+  color: #020617;
+  padding: 14px;
+  border-radius: 999px;
+  border: none;
+  font-weight: 700;
+  font-size: 15px;
+  cursor: pointer;
+  transition: all 0.3s ease;
 }
 
 .submit-btn:hover {
-  background: #e6c76a;
+  transform: translateY(-2px);
+  box-shadow: 0 10px 25px rgba(250, 204, 21, 0.35);
+}
+
+.submit-btn:active {
+  transform: translateY(0);
 }

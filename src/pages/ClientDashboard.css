@@ -195,3 +195,34 @@
     padding: 28px 22px;
   }
 }
+/* ===== CHARTS ROW ===== */
+.charts-row {
+  display: flex;
+  gap: 24px;
+  margin-top: 30px;
+  align-items: stretch;
+}
+
+/* Right side cards */
+.visibility-cards {
+  width: 260px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* Larger stat cards */
+.stat-card.large {
+  flex: 1;
+  padding: 22px;
+  font-size: 16px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.stat-card.large span {
+  font-size: 32px;
+  margin-top: 6px;
+  color: #22c55e;
+}

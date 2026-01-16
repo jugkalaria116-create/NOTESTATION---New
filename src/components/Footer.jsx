@@ -34,7 +34,7 @@ const Footer = () => {
 
       {/* Bottom */}
       <div className="footer-bottom">
-        <p>© 2025 NoteStation. All rights reserved | Made for learners, by learners.</p>
+        <p>© 2026 NoteStation. All rights reserved | Made for learners, by learners.</p>
       </div>
     </footer>
   );

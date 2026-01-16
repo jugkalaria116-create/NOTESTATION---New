@@ -24,6 +24,10 @@ function ClientDashboard() {
   const [likes, setLikes] = useState(0);
   const [downloads, setDownloads] = useState(0);
 
+  // 🔥 NEW STATES
+  const [privateNotes, setPrivateNotes] = useState(0);
+  const [publicNotes, setPublicNotes] = useState(0);
+
   /* ===== AUTH CHECK ===== */
   useEffect(() => {
     const n = sessionStorage.getItem("name");
@@ -53,6 +57,15 @@ function ClientDashboard() {
     fetch(`http://localhost:5000/user/downloads/${email}`)
       .then(res => res.json())
       .then(d => setDownloads(d.totalDownloads || 0));
+
+    // 🔥 NEW API (Private / Public)
+    fetch(`http://localhost:5000/user/notes/visibility/${email}`)
+      .then(res => res.json())
+      .then(d => {
+        setPrivateNotes(d.private || 0);
+        setPublicNotes(d.public || 0);
+      });
+
   }, [email]);
 
   /* ===== PIE CHART ===== */
@@ -129,12 +142,28 @@ function ClientDashboard() {
           </div>
         </div>
 
-        {/* ===== ACTIVITY OVERVIEW ===== */}
-        <section className="charts">
+        {/* ===== ACTIVITY + VISIBILITY ===== */}
+        <section className="charts-row">
+
+          {/* PIE CHART */}
           <div className="chart-card">
             <h3>Activity Overview</h3>
             <Doughnut data={pieChart} />
           </div>
+
+          {/* PRIVATE / PUBLIC CARDS */}
+          <div className="visibility-cards">
+            <div className="stat-card large">
+              🔒 Private Notes
+              <span>{privateNotes}</span>
+            </div>
+
+            <div className="stat-card large">
+              🌍 Public Notes
+              <span>{publicNotes}</span>
+            </div>
+          </div>
+
         </section>
       </main>
     </div>

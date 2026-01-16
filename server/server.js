@@ -453,6 +453,30 @@ app.get("/admin/contact-messages", (req, res) => {
     res.json(results);
   });
 });
+// ================= PRIVATE / PUBLIC NOTES COUNT (FIXED) =================
+app.get("/user/notes/visibility/:email", (req, res) => {
+  const { email } = req.params;
+
+  const sql = `
+    SELECT
+      SUM(CASE WHEN visibility = 'private' THEN 1 ELSE 0 END) AS privateNotes,
+      SUM(CASE WHEN visibility = 'public' THEN 1 ELSE 0 END) AS publicNotes
+    FROM notes
+    WHERE LOWER(Email) = LOWER(?)
+  `;
+
+  db.query(sql, [email], (err, result) => {
+    if (err) {
+      console.error("❌ VISIBILITY SQL ERROR:", err);
+      return res.status(500).json(err);
+    }
+
+    res.json({
+      private: result[0]?.privateNotes || 0,
+      public: result[0]?.publicNotes || 0
+    });
+  });
+});
 
 // ================= START SERVER =================
 const PORT = 5000;

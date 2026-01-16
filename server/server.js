@@ -235,7 +235,7 @@ app.patch("/notes/toggle-visibility/:id", (req, res) => {
   );
 });
 
-// ================= MY NOTES (FIXED POSITION) =================
+// ================= MY NOTES =================
 app.get("/notes/my/:email", (req, res) => {
   const sql = `
     SELECT
@@ -243,6 +243,7 @@ app.get("/notes/my/:email", (req, res) => {
       title,
       description,
       subject,
+      Email AS email,   -- 🔥 THIS IS REQUIRED
       visibility,
       likes_count,
       downloads_count,
@@ -258,6 +259,7 @@ app.get("/notes/my/:email", (req, res) => {
     res.json(result);
   });
 });
+
 
 // ================= USER DASHBOARD STATS =================
 app.get("/user/notes/:email", (req, res) => {
@@ -477,6 +479,61 @@ app.get("/user/notes/visibility/:email", (req, res) => {
     });
   });
 });
+// ================= DELETE NOTE (OWNER ONLY) =================
+app.delete("/notes/:id", (req, res) => {
+  const noteId = req.params.id;
+  const { email } = req.body; // owner email from frontend
+
+  if (!email) {
+    return res.status(400).json({ error: "Email is required" });
+  }
+
+  // 1️⃣ Fetch note to verify ownership
+  db.query(
+    "SELECT upload_file, Email FROM notes WHERE ID = ?",
+    [noteId],
+    (err, result) => {
+      if (err) return res.status(500).json(err);
+
+      if (result.length === 0) {
+        return res.status(404).json({ error: "Note not found" });
+      }
+
+      const note = result[0];
+
+      // 2️⃣ OWNER CHECK
+      if (note.Email.toLowerCase() !== email.toLowerCase()) {
+        return res.status(403).json({
+          error: "You are not allowed to delete this note",
+        });
+      }
+
+      // 3️⃣ Delete file from uploads
+      const filePath = path.join(__dirname, "uploads", note.upload_file);
+      if (fs.existsSync(filePath)) {
+        fs.unlinkSync(filePath);
+      }
+
+      // 4️⃣ Delete note from DB
+      db.query(
+        "DELETE FROM notes WHERE ID = ?",
+        [noteId],
+        (err) => {
+          if (err) return res.status(500).json(err);
+
+          // 5️⃣ Admin log
+          db.query(
+            "INSERT INTO admin_activity (action) VALUES (?)",
+            ["🗑 Note deleted"]
+          );
+
+          res.json({ success: true });
+        }
+      );
+    }
+  );
+});
+
 
 // ================= START SERVER =================
 const PORT = 5000;

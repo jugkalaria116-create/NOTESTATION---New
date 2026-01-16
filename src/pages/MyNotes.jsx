@@ -1,13 +1,16 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import "./MyNotes.css";
 
 function MyNotes() {
   const [notes, setNotes] = useState([]);
-  const [filter, setFilter] = useState("all"); // all | public | private
+  const [filter, setFilter] = useState("all");
+
   const email = sessionStorage.getItem("email");
 
   // ================= FETCH MY NOTES =================
-  const fetchMyNotes = async () => {
+  const fetchMyNotes = useCallback(async () => {
+    if (!email) return;
+
     try {
       const res = await fetch(`http://localhost:5000/notes/my/${email}`);
       const data = await res.json();
@@ -15,30 +18,34 @@ function MyNotes() {
     } catch (err) {
       console.error("Fetch my notes error:", err);
     }
-  };
+  }, [email]);
 
   useEffect(() => {
-    if (email) fetchMyNotes();
-  }, [email]);
+    fetchMyNotes();
+  }, [fetchMyNotes]);
 
   // ================= TOGGLE VISIBILITY =================
   const toggleVisibility = async (note) => {
     const newVisibility =
       note.visibility === "public" ? "private" : "public";
 
-    await fetch(
-      `http://localhost:5000/notes/toggle-visibility/${note.id}`,
-      {
-        method: "PATCH",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ visibility: newVisibility }),
-      }
-    );
+    try {
+      await fetch(
+        `http://localhost:5000/notes/toggle-visibility/${note.id}`,
+        {
+          method: "PATCH",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ visibility: newVisibility }),
+        }
+      );
 
-    fetchMyNotes(); // refresh list
+      fetchMyNotes();
+    } catch (err) {
+      console.error("Toggle visibility error:", err);
+    }
   };
 
-  // ================= FILTERED NOTES =================
+  // ================= FILTER NOTES =================
   const filteredNotes =
     filter === "all"
       ? notes

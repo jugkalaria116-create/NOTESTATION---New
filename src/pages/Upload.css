@@ -107,3 +107,57 @@
 .submit-btn:active {
   transform: translateY(0);
 }
+/* ================= VISIBILITY SELECT ================= */
+.upload-select {
+  width: 100%;
+  padding: 13px 14px;
+  border-radius: 12px;
+
+  background: rgba(15, 23, 42, 0.9);
+  color: #e5e7eb;
+  font-size: 14px;
+  font-weight: 500;
+
+  outline: none;
+  cursor: pointer;
+
+  border: 2px solid #facc15; 
+    transition: all 0.25s ease;
+
+  /* dropdown arrow */
+  background-image:
+    linear-gradient(45deg, transparent 50%, #facc15 50%),
+    linear-gradient(135deg, #facc15 50%, transparent 50%);
+  background-position:
+    calc(100% - 22px) 52%,
+    calc(100% - 16px) 52%;
+  background-size: 6px 6px, 6px 6px;
+  background-repeat: no-repeat;
+}
+
+/* ================= PRIVATE (GOLD) ================= */
+.upload-select:has(option[value="private"]:checked) {
+  border-color: #facc15;
+  box-shadow: 0 0 0 2px rgba(250, 204, 21, 0.25);
+
+  background-image:
+    linear-gradient(45deg, transparent 50%, #facc15 50%),
+    linear-gradient(135deg, #facc15 50%, transparent 50%);
+}
+
+/* ================= PUBLIC (GREEN) ================= */
+.upload-select:has(option[value="public"]:checked) {
+  border-color: #22c55e;
+  box-shadow: 0 0 0 2px rgba(34, 197, 94, 0.25);
+
+  background-image:
+    linear-gradient(45deg, transparent 50%, #22c55e 50%),
+    linear-gradient(135deg, #22c55e 50%, transparent 50%);
+}
+
+/* ================= DROPDOWN OPTIONS ================= */
+.upload-select option {
+  background: #4b4b4b;
+  color: #ffffff;
+  padding: 12px;
+}

@@ -1,4 +1,9 @@
-import React, { useEffect, useState, useCallback, useRef } from "react";
+import React, {
+  useEffect,
+  useState,
+  useCallback,
+  useRef,
+} from "react";
 import "./MyNotes.css";
 
 function MyNotes() {
@@ -15,9 +20,15 @@ function MyNotes() {
   const fetchMyNotes = useCallback(async () => {
     if (!email) return;
 
-    const res = await fetch(`http://localhost:5000/notes/my/${email}`);
-    const data = await res.json();
-    setNotes(Array.isArray(data) ? data : []);
+    try {
+      const res = await fetch(
+        `http://localhost:5000/notes/my/${email}`
+      );
+      const data = await res.json();
+      setNotes(Array.isArray(data) ? data : []);
+    } catch (err) {
+      console.error("Fetch my notes error:", err);
+    }
   }, [email]);
 
   useEffect(() => {
@@ -29,45 +40,62 @@ function MyNotes() {
     const newVisibility =
       note.visibility === "public" ? "private" : "public";
 
-    await fetch(`http://localhost:5000/notes/toggle-visibility/${note.id}`, {
-      method: "PATCH",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ visibility: newVisibility }),
-    });
+    await fetch(
+      `http://localhost:5000/notes/toggle-visibility/${note.id}`,
+      {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ visibility: newVisibility }),
+      }
+    );
 
     fetchMyNotes();
   };
 
-  // ================= DELETE WITH UNDO =================
-  const deleteNote = (note) => {
-    // 1️⃣ Remove from UI immediately
+  // ================= MOVE TO TRASH (SAFE) =================
+  const deleteNote = async (note) => {
+    // 1️⃣ Remove from UI instantly
     setNotes((prev) => prev.filter((n) => n.id !== note.id));
-
-    // 2️⃣ Store pending delete
     setPendingDelete(note);
 
-    // 3️⃣ Start 5-second timer
-    deleteTimerRef.current = setTimeout(async () => {
-      await fetch(`http://localhost:5000/notes/trash/${note.id}`, {
+    // 2️⃣ Move to trash in DB (deleted_at = NOW)
+    await fetch(
+      `http://localhost:5000/notes/trash/${note.id}`,
+      {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email }),
-      });
+      }
+    );
 
-
+    // 3️⃣ Undo window (UI only)
+    deleteTimerRef.current = setTimeout(() => {
       setPendingDelete(null);
     }, 5000);
   };
 
   // ================= UNDO DELETE =================
-  const undoDelete = () => {
+  const undoDelete = async () => {
+    if (!pendingDelete) return;
+
     clearTimeout(deleteTimerRef.current);
 
-    // Restore note
+    // Restore in DB
+    await fetch(
+      `http://localhost:5000/notes/restore/${pendingDelete.id}`,
+      {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email }),
+      }
+    );
+
+    // Restore in UI
     setNotes((prev) => [pendingDelete, ...prev]);
     setPendingDelete(null);
   };
 
+  // ================= FILTER =================
   const filteredNotes =
     filter === "all"
       ? notes
@@ -92,24 +120,43 @@ function MyNotes() {
 
       {/* ===== NOTES GRID ===== */}
       <div className="card-grid">
+        {filteredNotes.length === 0 && (
+          <p className="empty-state">No notes found</p>
+        )}
+
         {filteredNotes.map((note) => (
           <div className="note-card" key={note.id}>
             <h3>{note.title}</h3>
             <p>{note.description}</p>
 
-            <p><b>Subject:</b> {note.subject}</p>
-            <p><b>Visibility:</b> {note.visibility}</p>
+            <p>
+              <b>Subject:</b> {note.subject}
+            </p>
+
+            <p>
+              <b>Visibility:</b>{" "}
+              {note.visibility === "public"
+                ? "🌍 Public"
+                : "🔒 Private"}
+            </p>
 
             <div className="note-stats">
-              ❤️ {note.likes_count} ⬇️ {note.downloads_count}
+              ❤️ {note.likes_count} &nbsp; ⬇️{" "}
+              {note.downloads_count}
             </div>
 
             <div className="note-actions">
-              <button onClick={() => window.open(note.url, "_blank")}>
+              <button
+                onClick={() =>
+                  window.open(note.url, "_blank")
+                }
+              >
                 👁 View
               </button>
 
-              <button onClick={() => toggleVisibility(note)}>
+              <button
+                onClick={() => toggleVisibility(note)}
+              >
                 {note.visibility === "public"
                   ? "🔒 Make Private"
                   : "🌍 Make Public"}
@@ -121,7 +168,6 @@ function MyNotes() {
               >
                 🗑 Move to Trash
               </button>
-
             </div>
           </div>
         ))}
@@ -130,9 +176,8 @@ function MyNotes() {
       {/* ===== UNDO BAR ===== */}
       {pendingDelete && (
         <div className="undo-bar">
-          <span>Note deleted</span>
+          <span>Note moved to trash</span>
 
-          {/* ⏳ Countdown bar */}
           <div className="undo-timer">
             <div className="undo-progress" />
           </div>
@@ -140,7 +185,6 @@ function MyNotes() {
           <button onClick={undoDelete}>UNDO</button>
         </div>
       )}
-
     </div>
   );
 }

@@ -99,32 +99,55 @@
   color: #e5e7eb;
 }
 
-/* ================= CHARTS ================= */
+/* ================= CHART GRID ================= */
+/* Bar + Line side by side, Pie full width */
 .chart-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-  gap: 26px;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 28px;
 }
 
+/* Pie / Doughnut (3rd card) full width */
+.chart-card:nth-child(3) {
+  grid-column: span 2;
+}
+
+/* ================= CHART CARD ================= */
 .chart-card {
-  background: linear-gradient(180deg, #020617, #020617);
-  border: 1px solid #1e293b;
-  padding: 22px;
-  border-radius: 20px;
-  box-shadow: 0 12px 40px rgba(0,0,0,0.75);
-  transition: all 0.25s ease;
+  background: linear-gradient(
+    180deg,
+    rgba(15, 23, 42, 0.9),
+    rgba(2, 6, 23, 0.95)
+  );
+  border: 1px solid rgba(148, 163, 184, 0.15);
+  padding: 26px 24px 28px;
+  border-radius: 24px;
+  box-shadow:
+    0 25px 60px rgba(0, 0, 0, 0.8),
+    inset 0 0 30px rgba(255, 255, 255, 0.02);
+  transition: all 0.3s ease;
 }
 
 .chart-card:hover {
-  transform: translateY(-4px);
+  transform: translateY(-6px);
   border-color: #38bdf8;
+  box-shadow:
+    0 35px 80px rgba(0, 0, 0, 0.9),
+    inset 0 0 40px rgba(255, 255, 255, 0.04);
 }
 
 .chart-card h3 {
-  font-size: 16px;
-  margin-bottom: 14px;
-  color: #f1f5f9;
+  font-size: 17px;
+  font-weight: 600;
+  margin-bottom: 18px;
+  color: #f8fafc;
   text-align: center;
+  letter-spacing: 0.4px;
+}
+
+/* Chart canvas size control */
+.chart-card canvas {
+  max-height: 280px !important;
 }
 
 /* ================= ACTIVITY ================= */
@@ -151,11 +174,6 @@
   transform: translateY(-4px);
   box-shadow: 0 12px 35px rgba(0,0,0,0.7);
   border-color: #22c55e;
-}
-
-/* ================= LOADING / ERROR ================= */
-.admin-main h2 {
-  color: #f87171;
 }
 
 /* ================= SCROLLBAR ================= */
@@ -188,5 +206,14 @@
 
   .admin-nav button {
     text-align: center;
+  }
+
+  /* Mobile: all charts stacked */
+  .chart-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .chart-card:nth-child(3) {
+    grid-column: span 1;
   }
 }

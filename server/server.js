@@ -405,19 +405,20 @@ app.patch("/notes/restore/:id", (req, res) => {
 });
 
 app.delete("/notes/permanent/:id", (req, res) => {
-  const { email } = req.body;
-
   db.query(
-    "DELETE FROM notes WHERE ID=? AND LOWER(Email)=LOWER(?)",
-    [req.params.id, email],
+    "DELETE FROM notes WHERE ID=?",
+    [req.params.id],
     (err, r) => {
       if (err) return res.status(500).json(err);
       if (!r.affectedRows)
-        return res.status(403).json({ error: "Not allowed" });
+        return res.status(404).json({ error: "Note not found" });
+
+      logAdmin("🗑️ Note permanently deleted by admin");
       res.json({ success: true });
     }
   );
 });
+
 
 // ================= CLIENT DASHBOARD =================
 app.get("/user/notes/:email", (req, res) => {

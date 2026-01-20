@@ -35,20 +35,28 @@ function ManageNotes() {
   };
 
   // Delete note
-  const handleDelete = (id) => {
-    if (!window.confirm("Are you sure you want to delete this note?")) return;
+  const handleDelete = async (id) => {
+    if (!window.confirm("Are you sure you want to permanently delete this note?"))
+      return;
 
-    fetch(`http://localhost:5000/notes/${id}`, { method: "DELETE" })
-      .then((res) => {
-        if (res.ok) {
-          setNotes(notes.filter((n) => n.id !== id));
-          alert("Note deleted successfully!");
-        } else {
-          alert("Failed to delete note");
-        }
-      })
-      .catch((err) => console.error("Error deleting note:", err));
+    const res = await fetch(
+      `http://localhost:5000/notes/permanent/${id}`,
+      {
+        method: "DELETE",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: "admin" }) // required
+      }
+    );
+
+    if (!res.ok) {
+      alert("Delete failed");
+      return;
+    }
+
+    setNotes((prev) => prev.filter((n) => n.id !== id));
+    alert("Note permanently deleted");
   };
+
 
   if (loading) return <p>Loading notes...</p>;
 

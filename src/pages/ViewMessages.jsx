@@ -14,7 +14,7 @@ const ViewMessages = () => {
         return res.json();
       })
       .then((data) => {
-        setMessages(data);
+        setMessages(Array.isArray(data) ? data : []);
         setLoading(false);
       })
       .catch(() => {
@@ -24,14 +24,20 @@ const ViewMessages = () => {
   }, []);
 
   // ================= DELETE MESSAGE =================
-  const handleDelete = (id) => {
+  const handleDelete = async (id) => {
     if (!window.confirm("Delete this message?")) return;
 
-    fetch(`http://localhost:5000/admin/contact-messages/${id}`, {
-      method: "DELETE",
-    }).then(() => {
-      setMessages((prev) => prev.filter((m) => m.id !== id));
-    });
+    const res = await fetch(
+      `http://localhost:5000/admin/contact-messages/${id}`,
+      { method: "DELETE" }
+    );
+
+    if (!res.ok) {
+      alert("Failed to delete message");
+      return;
+    }
+
+    setMessages((prev) => prev.filter((m) => m.id !== id));
   };
 
   // ================= UI STATES =================
@@ -68,18 +74,14 @@ const ViewMessages = () => {
                 <td>{m.message}</td>
 
                 {/* ✅ FIXED DATE */}
-                <td>
-                  {m.date
-                    ? new Date(m.date).toLocaleString()
-                    : "—"}
-                </td>
+                <td>{new Date(m.created_at).toLocaleString()}</td>
 
                 <td>
                   <button
                     className="delete-btn"
                     onClick={() => handleDelete(m.id)}
                   >
-                     Delete
+                    🗑 Delete
                   </button>
                 </td>
               </tr>
@@ -92,4 +94,3 @@ const ViewMessages = () => {
 };
 
 export default ViewMessages;
-  

@@ -25,7 +25,7 @@ function Registers() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const { firstName, lastName, email, password, confirmPassword } = formData;
+    const { firstName, lastName, email, password, confirmPassword } = formData;   
 
     if (!firstName || !lastName || !email || !password || !confirmPassword) {
       setMessage({ text: "All fields are required!", type: "error" });

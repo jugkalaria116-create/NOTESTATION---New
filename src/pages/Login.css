@@ -1,5 +1,3 @@
-/* Login.css - SAME AS Register.css */
-
 /* =========================
    BASE
 ========================= */
@@ -10,8 +8,8 @@ body,
   height: 100%;
   margin: 0;
   font-family: "Segoe UI", Arial, sans-serif;
-  background-color: #0f0f0f;
-  color: #ffffff;
+  background: radial-gradient(circle at top, #020617, #020617);
+  color: #e5e7eb;
 }
 
 /* =========================
@@ -26,11 +24,13 @@ body,
   min-height: 85vh;
   padding: 40px 20px;
 
+  /* ✅ IMAGE KEPT */
   background-image:
-    linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)),
+    linear-gradient(rgba(2, 6, 23, 0.85), rgba(2, 6, 23, 0.85)),
     url("https://images.unsplash.com/photo-1512820790803-83ca734da794?auto=format&fit=crop&w=1470&q=80");
   background-size: cover;
   background-position: center;
+  background-attachment: fixed;
 
   border-radius: 14px;
 }
@@ -44,7 +44,7 @@ body,
   font-size: 2.1rem;
   font-weight: 600;
   letter-spacing: 1px;
-  color: #ffffff;
+  color: #facc15;
 }
 
 /* =========================
@@ -56,12 +56,12 @@ body,
   max-width: 420px;
   padding: 30px 28px;
 
-  background: rgba(25, 25, 25, 0.85);
-  -webkit-backdrop-filter: blur(10px);
-  backdrop-filter: blur(10px);
+  background: rgba(2, 6, 23, 0.78);
+  /* backdrop-filter: blur(14px); */
 
-  border-radius: 14px;
-  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6);
+  border-radius: 18px;
+  border: 1px solid #1e293b;
+  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.65);
 
   display: flex;
   flex-direction: column;
@@ -75,11 +75,11 @@ body,
   padding: 14px 16px;
   margin-bottom: 14px;
 
-  border-radius: 10px;
-  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 12px;
+  border: 1px solid #1e293b;
 
-  background: rgba(255, 255, 255, 0.08);
-  color: #ffffff;
+  background: rgba(2, 6, 23, 0.75);
+  color: #e5e7eb;
 
   font-size: 15px;
   outline: none;
@@ -88,12 +88,13 @@ body,
 }
 
 .login-page-container input::placeholder {
-  color: #cfcfcf;
+  color: #94a3b8;
 }
 
 .login-page-container input:focus {
-  border-color: #ffd700;
-  background: rgba(255, 255, 255, 0.12);
+  border-color: #22c55e;
+  background: rgba(2, 6, 23, 0.9);
+  box-shadow: 0 0 0 2px rgba(34, 197, 94, 0.25);
 }
 
 /* =========================
@@ -104,22 +105,22 @@ body,
   margin-top: 6px;
   padding: 14px;
 
-  background: #ffd700;
-  color: #000000;
+  background: linear-gradient(135deg, #facc15, #fde047);
+  color: #020617;
 
   border: none;
-  border-radius: 10px;
+  border-radius: 999px;
 
   font-size: 16px;
   font-weight: 700;
   cursor: pointer;
 
-  transition: all 0.3s ease;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
 .login-page-container button:hover {
-  background: #ffcc00;
-  transform: translateY(-1px);
+  transform: translateY(-2px);
+  box-shadow: 0 12px 30px rgba(250, 204, 21, 0.45);
 }
 
 /* =========================
@@ -130,11 +131,11 @@ body,
   margin-top: 16px;
   text-align: center;
   font-size: 14px;
-  color: #dcdcdc;
+  color: #94a3b8;
 }
 
 .register-link a {
-  color: #ffd700;
+  color: #facc15;
   font-weight: 600;
   text-decoration: none;
 }

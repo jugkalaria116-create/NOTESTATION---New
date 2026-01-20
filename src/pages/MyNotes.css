@@ -1,8 +1,4 @@
-/* =====================================================
-   MY NOTES – PROFESSIONAL STYLESHEET
-   ===================================================== */
-
-/* ================= PAGE LAYOUT ================= */
+/* ================= PAGE ================= */
 .page-container {
   min-height: 100vh;
   background: radial-gradient(circle at top, #020617, #020617);
@@ -27,51 +23,34 @@
 }
 
 .visibility-filter {
-  background-color: #020617;
+  background: #020617;
   border: 1px solid #1e293b;
   color: #e5e7eb;
   padding: 10px 16px;
   border-radius: 12px;
-  font-size: 14px;
   cursor: pointer;
-  transition: border-color 0.25s ease, box-shadow 0.25s ease;
 }
 
-.visibility-filter:hover {
-  border-color: #22c55e;
-}
-
-.visibility-filter:focus {
-  outline: none;
-  border-color: #22c55e;
-  box-shadow: 0 0 0 2px rgba(34, 197, 94, 0.25);
-}
-
-.visibility-filter option {
-  background-color: #020617;
-  color: #e5e7eb;
-}
-
-/* ================= GRID ================= */
+/* ================= GRID (FIXED) ================= */
 .card-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(280px, 280px));
   gap: 26px;
+  justify-content: start;
 }
 
-/* ================= NOTE CARD ================= */
+/* ================= CARD ================= */
 .note-card {
   background: #020617;
   border: 1px solid #1e293b;
   border-radius: 18px;
   padding: 22px;
   box-shadow: 0 10px 28px rgba(0, 0, 0, 0.6);
-  transition: transform 0.25s ease, box-shadow 0.25s ease;
+  transition: transform 0.25s ease;
 }
 
 .note-card:hover {
   transform: translateY(-4px);
-  box-shadow: 0 16px 36px rgba(0, 0, 0, 0.75);
 }
 
 /* ================= CONTENT ================= */
@@ -87,30 +66,6 @@
   margin-bottom: 6px;
 }
 
-.note-card b {
-  color: #f1f5f9;
-}
-
-/* ================= VISIBILITY ================= */
-.visibility {
-  display: inline-block;
-  padding: 6px 12px;
-  font-size: 12px;
-  border-radius: 999px;
-  font-weight: 600;
-  margin-top: 6px;
-}
-
-.visibility.public {
-  background: rgba(34, 197, 94, 0.15);
-  color: #22c55e;
-}
-
-.visibility.private {
-  background: rgba(250, 204, 21, 0.15);
-  color: #facc15;
-}
-
 /* ================= STATS ================= */
 .note-stats {
   margin: 12px 0;
@@ -123,55 +78,34 @@
   display: flex;
   flex-wrap: wrap;
   gap: 10px;
-  margin-top: 14px;
 }
 
 .note-actions button {
   min-width: 120px;
   padding: 8px 14px;
-  font-size: 13px;
   border-radius: 999px;
   border: 1px solid #1e293b;
   background: #020617;
   color: #e5e7eb;
   cursor: pointer;
-  transition: background 0.25s ease, transform 0.2s ease;
 }
 
-.note-actions button:hover {
-  background: #1e293b;
-  transform: translateY(-2px);
-}
-
-/* ================= DELETE BUTTON ================= */
+/* ================= DELETE ================= */
 .delete-btn {
   background: linear-gradient(135deg, #ef4444, #dc2626);
-  border: 1px solid #b91c1c;
-  color: #ffffff;
-  font-weight: 600;
-  box-shadow: 0 6px 16px rgba(239, 68, 68, 0.35);
+  border: none;
+  color: #fff;
 }
 
-.delete-btn:hover {
-  background: linear-gradient(135deg, #dc2626, #b91c1c);
-  box-shadow: 0 10px 25px rgba(239, 68, 68, 0.55);
-}
-
-.delete-btn:active {
-  transform: scale(0.98);
-}
-
-/* ================= EMPTY STATE ================= */
-.empty-state,
-.card-grid > p {
+/* ================= EMPTY ================= */
+.empty-state {
   grid-column: 1 / -1;
   text-align: center;
   color: #94a3b8;
-  font-size: 16px;
   margin-top: 60px;
 }
 
-/* ================= UNDO BAR ================= */
+/* ================= UNDO ================= */
 .undo-bar {
   position: fixed;
   bottom: 24px;
@@ -179,84 +113,15 @@
   transform: translateX(-50%);
   background: #020617;
   border: 1px solid #1e293b;
-  color: #e5e7eb;
   padding: 14px 18px;
   border-radius: 14px;
   display: flex;
-  align-items: center;
   gap: 14px;
-  min-width: 260px;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
-  animation: slideUp 0.3s ease;
-  z-index: 1000;
-}
-
-/* Progress bar */
-.undo-timer {
-  flex: 1;
-  height: 6px;
-  background: #1e293b;
-  border-radius: 999px;
-  overflow: hidden;
-}
-
-.undo-progress {
-  height: 100%;
-  background: linear-gradient(90deg, #22c55e, #16a34a);
-  animation: undoCountdown 5s linear forwards;
-}
-
-/* Undo button */
-.undo-bar button {
-  background: #22c55e;
-  color: #020617;
-  border: none;
-  padding: 6px 14px;
-  border-radius: 999px;
-  font-weight: 700;
-  cursor: pointer;
-}
-
-.undo-bar button:hover {
-  background: #16a34a;
-}
-
-/* ================= ANIMATIONS ================= */
-@keyframes slideUp {
-  from {
-    opacity: 0;
-    transform: translate(-50%, 16px);
-  }
-  to {
-    opacity: 1;
-    transform: translate(-50%, 0);
-  }
-}
-
-@keyframes undoCountdown {
-  from {
-    width: 100%;
-  }
-  to {
-    width: 0%;
-  }
 }
 
 /* ================= RESPONSIVE ================= */
 @media (max-width: 600px) {
-  .page-container {
-    padding: 30px 14px;
-  }
-
-  .page-container h1 {
-    font-size: 26px;
-  }
-
-  .note-actions {
-    flex-direction: column;
-  }
-
-  .note-actions button {
-    width: 100%;
+  .card-grid {
+    justify-content: center;
   }
 }

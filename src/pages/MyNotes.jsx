@@ -1,16 +1,11 @@
-import React, {
-  useEffect,
-  useState,
-  useCallback,
-  useRef,
-} from "react";
+import React, { useEffect, useState, useCallback, useRef } from "react";
 import "./MyNotes.css";
 
 function MyNotes() {
   const [notes, setNotes] = useState([]);
   const [filter, setFilter] = useState("all");
 
-  // 🧠 Undo state
+  // Undo state
   const [pendingDelete, setPendingDelete] = useState(null);
   const deleteTimerRef = useRef(null);
 
@@ -21,9 +16,7 @@ function MyNotes() {
     if (!email) return;
 
     try {
-      const res = await fetch(
-        `http://localhost:5000/notes/my/${email}`
-      );
+      const res = await fetch(`http://localhost:5000/notes/my/${email}`);
       const data = await res.json();
       setNotes(Array.isArray(data) ? data : []);
     } catch (err) {
@@ -52,23 +45,17 @@ function MyNotes() {
     fetchMyNotes();
   };
 
-  // ================= MOVE TO TRASH (SAFE) =================
+  // ================= MOVE TO TRASH =================
   const deleteNote = async (note) => {
-    // 1️⃣ Remove from UI instantly
     setNotes((prev) => prev.filter((n) => n.id !== note.id));
     setPendingDelete(note);
 
-    // 2️⃣ Move to trash in DB (deleted_at = NOW)
-    await fetch(
-      `http://localhost:5000/notes/trash/${note.id}`,
-      {
-        method: "PATCH",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email }),
-      }
-    );
+    await fetch(`http://localhost:5000/notes/trash/${note.id}`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email }),
+    });
 
-    // 3️⃣ Undo window (UI only)
     deleteTimerRef.current = setTimeout(() => {
       setPendingDelete(null);
     }, 5000);
@@ -80,7 +67,6 @@ function MyNotes() {
 
     clearTimeout(deleteTimerRef.current);
 
-    // Restore in DB
     await fetch(
       `http://localhost:5000/notes/restore/${pendingDelete.id}`,
       {
@@ -90,7 +76,6 @@ function MyNotes() {
       }
     );
 
-    // Restore in UI
     setNotes((prev) => [pendingDelete, ...prev]);
     setPendingDelete(null);
   };
@@ -105,7 +90,7 @@ function MyNotes() {
     <div className="page-container">
       <h1>My Notes</h1>
 
-      {/* ===== FILTER ===== */}
+      {/* FILTER */}
       <div className="filter-bar">
         <select
           className="visibility-filter"
@@ -118,7 +103,7 @@ function MyNotes() {
         </select>
       </div>
 
-      {/* ===== NOTES GRID ===== */}
+      {/* NOTES GRID */}
       <div className="card-grid">
         {filteredNotes.length === 0 && (
           <p className="empty-state">No notes found</p>
@@ -135,28 +120,19 @@ function MyNotes() {
 
             <p>
               <b>Visibility:</b>{" "}
-              {note.visibility === "public"
-                ? "🌍 Public"
-                : "🔒 Private"}
+              {note.visibility === "public" ? "🌍 Public" : "🔒 Private"}
             </p>
 
             <div className="note-stats">
-              ❤️ {note.likes_count} &nbsp; ⬇️{" "}
-              {note.downloads_count}
+              ❤️ {note.likes_count} &nbsp; ⬇️ {note.downloads_count}
             </div>
 
             <div className="note-actions">
-              <button
-                onClick={() =>
-                  window.open(note.url, "_blank")
-                }
-              >
+              <button onClick={() => window.open(note.url, "_blank")}>
                 👁 View
               </button>
 
-              <button
-                onClick={() => toggleVisibility(note)}
-              >
+              <button onClick={() => toggleVisibility(note)}>
                 {note.visibility === "public"
                   ? "🔒 Make Private"
                   : "🌍 Make Public"}
@@ -173,7 +149,7 @@ function MyNotes() {
         ))}
       </div>
 
-      {/* ===== UNDO BAR ===== */}
+      {/* UNDO BAR */}
       {pendingDelete && (
         <div className="undo-bar">
           <span>Note moved to trash</span>

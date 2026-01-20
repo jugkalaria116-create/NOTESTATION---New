@@ -9,20 +9,24 @@
   justify-content: space-between;
 
   padding: 14px 40px;
-  background: linear-gradient(180deg, #000000, #0b0b0b);
-  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.7);
+
+  background: rgba(2, 6, 23, 0.85);
+  border-bottom: 1px solid #1e293b;
+  /* backdrop-filter: blur(14px); */
+
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
 }
 
-/* Logo */
+/* ================= LOGO ================= */
 .navbar-logo .logo-text {
   font-size: 22px;
-  font-weight: 700;
+  font-weight: 800;
   letter-spacing: 2px;
-  color: #f6d780;
+  color: #facc15;
   text-decoration: none;
 }
 
-/* Nav Links */
+/* ================= NAV LINKS ================= */
 .nav-links {
   display: flex;
   gap: 28px;
@@ -33,7 +37,7 @@
 
 .nav-links li a {
   position: relative;
-  color: #ffffff;
+  color: #e5e7eb;
   text-decoration: none;
   font-weight: 500;
   font-size: 15px;
@@ -41,10 +45,10 @@
 }
 
 .nav-links li a:hover {
-  color: #f6d780;
+  color: #facc15;
 }
 
-/* Active underline effect (optional) */
+/* Underline hover effect */
 .nav-links li a::after {
   content: "";
   position: absolute;
@@ -52,7 +56,7 @@
   bottom: -6px;
   width: 0%;
   height: 2px;
-  background-color: #f6d780;
+  background-color: #facc15;
   transition: width 0.3s ease;
 }
 
@@ -60,18 +64,19 @@
   width: 100%;
 }
 
-/* Right buttons */
+/* ================= RIGHT BUTTONS ================= */
 .login-btn {
   display: flex;
   align-items: center;
   gap: 12px;
 }
 
+/* Shared button styles */
 .login-btn a,
 .login-btn button {
   padding: 8px 18px;
-  border-radius: 20px;
-  border: none;
+  border-radius: 999px;
+  border: 1px solid transparent;
   font-size: 14px;
   font-weight: 600;
   cursor: pointer;
@@ -79,27 +84,27 @@
   transition: all 0.25s ease;
 }
 
-/* Primary Button */
+/* Primary button */
 .login-btn a {
-  background-color: #f6d780;
-  color: #000000;
+  background: linear-gradient(135deg, #facc15, #fde047);
+  color: #020617;
 }
 
 .login-btn a:hover {
-  background-color: #ffe6a3;
-  box-shadow: 0 6px 16px rgba(246, 215, 128, 0.5);
+  box-shadow: 0 8px 20px rgba(250, 204, 21, 0.45);
+  transform: translateY(-2px);
 }
 
-/* Logout Button */
+/* Logout button */
 .login-btn button {
-  background-color: transparent;
-  color: #f6d780;
-  border: 1px solid #f6d780;
+  background: transparent;
+  color: #facc15;
+  border: 1px solid #facc15;
 }
 
 .login-btn button:hover {
-  background-color: #f6d780;
-  color: #000000;
+  background: #facc15;
+  color: #020617;
 }
 
 /* ================= MOBILE ================= */
@@ -109,6 +114,6 @@
   }
 
   .nav-links {
-    display: none; /* later can convert to hamburger */
+    display: none; /* ready for hamburger later */
   }
 }

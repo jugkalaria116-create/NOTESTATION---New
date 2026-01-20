@@ -1,68 +1,58 @@
+/* ================= FOOTER ================= */
 .footer {
-  background: #111;
-  color: white;
+  background: radial-gradient(circle at top, #020617, #020617);
+  color: #e5e7eb;
   text-align: center;
   padding: 50px 20px 20px;
- 
+  border-top: 1px solid #1e293b;
+  font-family: "Segoe UI", system-ui, sans-serif;
 }
 
+/* ================= CTA ================= */
 .footer-cta {
-  background: #1c1c1c;
+  background: rgba(2, 6, 23, 0.75);
+  border: 1px solid #1e293b;
   padding: 40px 20px;
-  border-radius: 12px;
+  border-radius: 24px;
   margin-bottom: 30px;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
+  box-shadow: 0 25px 50px rgba(0, 0, 0, 0.6);
 }
 
 .footer-cta h2 {
   font-size: 1.8rem;
   margin-bottom: 15px;
+  color: #facc15;
 }
 
 .footer-cta h2 span {
-  color: #ffcc00;
+  color: #22c55e;
 }
 
 .footer-cta p {
   font-size: 1rem;
-  color: #ccc;
+  color: #94a3b8;
   margin-bottom: 20px;
 }
 
+/* CTA BUTTON */
 .footer-btn {
-  background: #ffcc00;
+  background: linear-gradient(135deg, #facc15, #fde047);
   border: none;
   padding: 12px 28px;
-  border-radius: 25px;
+  border-radius: 999px;
   font-size: 1rem;
-  font-weight: bold;
+  font-weight: 700;
   cursor: pointer;
-  transition: all 0.3s ease;
+  color: #020617;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
 .footer-btn:hover {
-  background: #e6b800;
   transform: translateY(-3px);
+  box-shadow: 0 12px 30px rgba(250, 204, 21, 0.45);
 }
 
-.footer-bottom {
-  border-top: 1px solid #333;
-  padding-top: 15px;
-  font-size: 0.9rem;
-  color: #aaa;
-}
-
-.footer-bottom .brand {
-  color: #ffcc00;
-  font-weight: bold;
-}
-.footer {
-  background: #000000;
-  color: #FFD166;
-  padding: 50px 40px 20px;
-  font-family: "Nunito", sans-serif;
-}
-
+/* ================= CONTENT ================= */
 .footer-container {
   display: grid;
   grid-template-columns: 1.5fr 1fr 1fr;
@@ -71,41 +61,47 @@
 }
 
 .footer-brand h2 {
-  color: #FFD166;
+  color: #facc15;
   margin-bottom: 10px;
 }
 
 .footer-brand p {
   font-size: 14px;
-  color: #FFD166;
+  color: #94a3b8;
 }
 
 .footer-links h4 {
   margin-bottom: 12px;
-  color: #FFD166;
+  color: #facc15;
 }
 
 .footer-links a {
   display: block;
-  color: #FFD166;
+  color: #e5e7eb;
   text-decoration: none;
   margin-bottom: 10px;
   font-size: 14px;
+  transition: color 0.25s ease;
 }
 
 .footer-links a:hover {
-  color: #FFD166;
+  color: #22c55e;
 }
 
+/* ================= BOTTOM ================= */
 .footer-bottom {
-  border-top: 1px solid #111;
+  border-top: 1px solid #1e293b;
   padding-top: 15px;
-  text-align: center;
   font-size: 13px;
-  color: #FFB703;
+  color: #94a3b8;
 }
 
-/* Responsive */
+.footer-bottom .brand {
+  color: #facc15;
+  font-weight: 700;
+}
+
+/* ================= RESPONSIVE ================= */
 @media (max-width: 768px) {
   .footer-container {
     grid-template-columns: 1fr;

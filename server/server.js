@@ -70,6 +70,74 @@ app.get("/admin/dashboard", (req, res) => {
     });
   });
 });
+// ================= CONTACT FORM =================
+app.post("/contact", (req, res) => {
+  const { name, email, subject, message } = req.body;
+
+  if (!name || !email || !subject || !message) {
+    return res.status(400).json({ error: "All fields are required" });
+  }
+
+  const sql = `
+    INSERT INTO contact (Name, Email, Subject, contact_messages)
+    VALUES (?, ?, ?, ?)
+  `;
+
+  db.query(sql, [name, email, subject, message], (err) => {
+    if (err) {
+      console.error("❌ Contact insert error:", err);
+      return res.status(500).json({ error: "Database error" });
+    }
+
+    logAdmin("📩 New contact message");
+    res.status(201).json({ success: true, message: "Message sent successfully" });
+  });
+});
+// ================= ADMIN CONTACT MESSAGES =================
+app.get("/admin/contact-messages", (req, res) => {
+  const sql = `
+    SELECT
+      id,
+      Name AS name,
+      Email AS email,
+      Subject AS subject,
+      contact_messages AS message,
+      created_at
+    FROM contact
+    ORDER BY created_at DESC
+  `;
+
+  db.query(sql, (err, results) => {
+    if (err) {
+      console.error("❌ Contact fetch error:", err);
+      return res.status(500).json({ error: "Database error" });
+    }
+    res.json(results);
+  });
+});
+
+// ================= ADMIN DELETE CONTACT MESSAGE =================
+app.delete("/admin/contact-messages/:id", (req, res) => {
+  const { id } = req.params;
+
+  db.query(
+    "DELETE FROM contact WHERE id = ?",
+    [id],
+    (err, result) => {
+      if (err) {
+        console.error("❌ Delete contact error:", err);
+        return res.status(500).json({ error: "Database error" });
+      }
+
+      if (!result.affectedRows) {
+        return res.status(404).json({ error: "Message not found" });
+      }
+
+      logAdmin("🗑️ Contact message deleted");
+      res.json({ success: true });
+    }
+  );
+});
 
 
 // ================= HELPERS =================

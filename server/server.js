@@ -192,13 +192,19 @@ app.post("/register", (req, res) => {
 app.post("/login", (req, res) => {
   const { email, password } = req.body;
 
+  if (!email || !password) {
+    return res.status(400).json({ message: "Email and password required" });
+  }
+
   db.query(
     "SELECT fname, lname, email FROM user WHERE email=? AND password=?",
     [email, password],
     (err, r) => {
-      if (err) return res.status(500).json(err);
-      if (!r.length)
-        return res.status(401).json({ error: "Invalid credentials" });
+      if (err) return res.status(500).json({ message: "Database error" });
+
+      if (!r.length) {
+        return res.status(401).json({ message: "Invalid credentials" });
+      }
 
       res.json({
         name: `${r[0].fname} ${r[0].lname}`,
@@ -208,6 +214,7 @@ app.post("/login", (req, res) => {
     }
   );
 });
+
 
 // ================= FILE UPLOAD =================
 const storage = multer.diskStorage({
@@ -514,4 +521,6 @@ app.use((req, res) => {
 // ================= START SERVER =================
 app.listen(5000, () => {
   console.log("🚀 Server running on http://localhost:5000");
+  console.log("🔥 CORRECT SERVER.JS IS RUNNING 🔥");
+
 });
